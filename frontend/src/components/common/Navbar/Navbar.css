@@ -1,0 +1,451 @@
+/* .navbar{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+    background:#fff;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+
+}
+
+.navbar-container{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:18px 40px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:var(--primary);
+
+    text-decoration:none;
+
+}
+
+.nav-links{
+
+    display:flex;
+
+    gap:35px;
+
+}
+
+.nav-links a{
+
+    text-decoration:none;
+
+    color:var(--text-dark);
+
+    font-weight:500;
+
+    transition:.3s;
+
+}
+
+.nav-links a:hover,
+
+.nav-links a.active{
+
+    color:var(--primary);
+
+}
+
+.navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.icon-btn{
+
+    color:var(--text-dark);
+
+}
+
+.profile-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    text-decoration:none;
+
+    color:var(--text-dark);
+
+}
+
+.menu-btn{
+
+    display:none;
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+}
+
+@media(max-width:992px){
+
+.nav-links{
+
+    position:absolute;
+
+    top:75px;
+
+    left:0;
+
+    width:100%;
+
+    background:#fff;
+
+    flex-direction:column;
+
+    padding:20px;
+
+    display:none;
+
+}
+
+.nav-links.active{
+
+    display:flex;
+
+}
+
+.menu-btn{
+
+    display:block;
+
+}
+
+} */
+ /* ===========================
+   NAVBAR
+=========================== */
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border-bottom:1px solid rgba(0,0,0,.06);
+
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+
+    transition:.3s ease;
+}
+
+.navbar-container{
+    max-width:1400px;
+    margin:auto;
+
+    padding:18px 40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+/* ===========================
+   LOGO
+=========================== */
+
+.logo{
+    font-size:30px;
+    font-weight:800;
+    gap: 20px;
+    text-decoration:none;
+
+    color:var(--primary);
+
+    letter-spacing:.5px;
+
+    transition:.3s;
+}
+
+.logo:hover{
+    transform:scale(1.05);
+    color:#ff7b00;
+}
+
+/* ===========================
+   NAV LINKS
+=========================== */
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.nav-links a{
+    position:relative;
+
+    text-decoration:none;
+
+    color:var(--text-dark);
+
+    font-weight:600;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    transition:.35s ease;
+}
+
+/* Hover */
+
+.nav-links a:hover{
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary),#ff7b00);
+
+    box-shadow:0 8px 18px rgba(255,120,0,.25);
+}
+
+/* Active */
+
+.nav-links a.active{
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary),#ff7b00);
+
+    box-shadow:0 10px 20px rgba(255,120,0,.35);
+}
+
+/* ===========================
+   RIGHT SECTION
+=========================== */
+
+.navbar-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+/* ===========================
+   CART ICON
+=========================== */
+
+.icon-btn{
+    width:46px;
+    height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+
+    color:var(--text-dark);
+
+    border-radius:50%;
+
+    background:#f6f7fb;
+
+    transition:.35s;
+}
+
+.icon-btn:hover{
+    background:linear-gradient(135deg,var(--primary),#ff7b00);
+    color:#fff;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 20px rgba(255,120,0,.30);
+}
+
+/* ===========================
+   PROFILE BUTTON
+=========================== */
+
+.profile-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:10px 18px;
+
+    text-decoration:none;
+
+    color:var(--text-dark);
+
+    background:#f8f9fc;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+    transition:.35s;
+}
+
+.profile-btn:hover{
+    background:linear-gradient(135deg,var(--primary),#ff7b00);
+    color:#fff;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 25px rgba(255,120,0,.28);
+}
+
+.profile-btn svg{
+    font-size:18px;
+}
+
+/* ===========================
+   MENU BUTTON
+=========================== */
+
+.menu-btn{
+    display:none;
+
+    width:45px;
+    height:45px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f3f5f9;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.menu-btn:hover{
+    background:linear-gradient(135deg,var(--primary),#ff7b00);
+    color:#fff;
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media(max-width:992px){
+
+    .navbar-container{
+        padding:16px 22px;
+    }
+
+    .logo{
+        font-size:24px;
+    }
+
+    .nav-links{
+
+        position:absolute;
+
+        top:82px;
+        left:20px;
+        right:20px;
+
+        display:none;
+
+        flex-direction:column;
+
+        gap:10px;
+
+        padding:22px;
+
+        border-radius:20px;
+
+        background:rgba(255,255,255,.96);
+
+        backdrop-filter:blur(18px);
+
+        box-shadow:
+            0 15px 40px rgba(0,0,0,.12);
+
+        animation:slideDown .35s ease;
+    }
+
+    .nav-links.active{
+        display:flex;
+    }
+
+    .nav-links a{
+        width:100%;
+        text-align:center;
+        padding:14px;
+        border-radius:12px;
+    }
+
+    .menu-btn{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .navbar-container{
+        padding:15px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .profile-btn span{
+        display:none;
+    }
+
+    .profile-btn{
+        width:45px;
+        height:45px;
+        padding:0;
+        justify-content:center;
+        border-radius:50%;
+    }
+
+}
+
+/* ===========================
+   ANIMATION
+=========================== */
+
+@keyframes slideDown{
+
+    from{
+        opacity:0;
+        transform:translateY(-20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}

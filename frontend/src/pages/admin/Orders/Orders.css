@@ -1,0 +1,180 @@
+.order-filters{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr 1fr;
+
+    gap:20px;
+
+    margin:30px 0;
+
+}
+
+.orders-grid{
+
+    display:grid;
+
+    gap:20px;
+
+}
+
+.order-card{
+
+    border-left:5px solid var(--primary);
+
+}
+
+.order-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.order-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:20px;
+
+}
+
+.reject-dialog {
+    text-align: center;
+    padding: 10px 5px 5px;
+}
+
+.reject-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fff1f2;
+    color: #dc2626;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    border: 1px solid #fecdd3;
+}
+
+.reject-dialog h4 {
+    margin-bottom: 10px;
+
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.reject-dialog p {
+    margin: 0 auto 8px;
+
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.reject-dialog strong {
+    color: #111827;
+}
+
+.reject-warning {
+    color: #dc2626 !important;
+    font-size: 13px !important;
+}
+
+.reject-dialog .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+
+    margin-top: 24px;
+}
+
+/* for accepting dialog box */
+.accept-dialog {
+    text-align: center;
+    padding: 10px 5px 5px;
+}
+
+.accept-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ecfdf5;
+    color: #16a34a;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    border: 1px solid #bbf7d0;
+}
+
+.accept-dialog h4 {
+    margin-bottom: 10px;
+
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.accept-dialog p {
+    margin: 0 auto 8px;
+
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.accept-dialog strong {
+    color: #111827;
+}
+
+.accept-info {
+    color: #16a34a !important;
+    font-size: 13px !important;
+}
+
+.accept-dialog .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+
+    margin-top: 24px;
+}
+
+@media(max-width:768px){
+
+    .order-filters{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .order-actions{
+
+        flex-direction:column;
+
+    }
+
+}

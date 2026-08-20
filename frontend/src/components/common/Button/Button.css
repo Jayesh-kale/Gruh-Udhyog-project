@@ -1,0 +1,227 @@
+.btn-custom{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    border:none;
+
+    outline:none;
+
+    transition:.3s ease;
+
+    font-weight:600;
+
+    border-radius:50px;
+
+}
+
+/*================ SIZE ================*/
+
+.btn-sm{
+
+    padding:8px 18px;
+
+    font-size:14px;
+
+}
+
+.btn-md{
+
+    padding:12px 28px;
+
+    font-size:16px;
+
+}
+
+.btn-lg{
+
+    padding:15px 34px;
+
+    font-size:18px;
+
+}
+
+/*================ WIDTH ================*/
+
+.btn-full{
+
+    width:100%;
+
+}
+
+/*================ PRIMARY ================*/
+
+.btn-primary{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+.btn-primary:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+
+}
+
+/*================ SECONDARY ================*/
+
+.btn-secondary{
+
+    background:#6c757d;
+
+    color:white;
+
+}
+
+.btn-secondary:hover{
+
+    background:#565e64;
+
+}
+
+/*================ SUCCESS ================*/
+
+.btn-success{
+
+    background:var(--success);
+
+    color:white;
+
+}
+
+.btn-success:hover{
+
+    filter:brightness(.95);
+
+}
+
+/*================ DANGER ================*/
+
+.btn-danger{
+
+    background:var(--danger);
+
+    color:white;
+
+}
+
+.btn-danger:hover{
+
+    filter:brightness(.95);
+
+}
+
+/*================ WARNING ================*/
+
+.btn-warning{
+
+    background:var(--warning);
+
+    color:black;
+
+}
+
+/*================ INFO ================*/
+
+.btn-info{
+
+    background:var(--info);
+
+    color:white;
+
+}
+
+/*================ OUTLINE ================*/
+
+.btn-outline{
+
+    background:transparent;
+
+    border:2px solid var(--primary);
+
+    color:var(--primary);
+
+}
+
+.btn-outline:hover{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+/*================ DISABLED ================*/
+
+.btn-custom:disabled{
+
+    opacity:.65;
+
+    cursor:not-allowed;
+
+}
+
+/*================ ICON ================*/
+
+.btn-icon{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:18px;
+
+}
+
+.btn-text{
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+/*================ SPINNER ================*/
+
+.spinner{
+
+    width:18px;
+
+    height:18px;
+
+    border:3px solid rgba(255,255,255,.3);
+
+    border-top:3px solid white;
+
+    border-radius:50%;
+
+    animation:spin .8s linear infinite;
+
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}

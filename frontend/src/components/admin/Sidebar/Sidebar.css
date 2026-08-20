@@ -1,0 +1,11 @@
+.options{
+    color: rgb(177, 148, 148);
+}
+.bar {
+  border: none;
+  height: 3px;
+  background: linear-gradient(to right, transparent, #2ecc71, transparent);
+  box-shadow: 0 0 15px #2ecc71;
+  margin: 40px 0;
+
+}

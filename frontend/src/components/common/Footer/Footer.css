@@ -1,0 +1,238 @@
+.footer {
+
+    background: #1f2937;
+
+    color: #ffffff;
+
+    padding: 70px 0 25px;
+
+}
+
+.footer-logo {
+
+    font-size: 2rem;
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+
+}
+
+.footer-description {
+
+    color: #d1d5db;
+
+    line-height: 1.8;
+
+    max-width: 350px;
+
+}
+
+.footer h5 {
+
+    margin-bottom: 20px;
+
+    font-weight: 600;
+
+}
+
+.footer ul {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+
+}
+
+.footer ul li {
+
+    margin-bottom: 12px;
+
+}
+
+.footer a {
+
+    color: #d1d5db;
+
+    text-decoration: none;
+
+    transition: .3s;
+
+}
+
+.facebook-icon:hover {
+
+    background: #3b5998;
+
+    color: #dce8e0;
+     width: 46px;
+        height: 46px;
+        font-size: 18px;
+
+}
+
+.whatsapp-icon:hover {
+
+    background: #22c55e;
+    color: #dce8e0;
+     width: 46px;
+        height: 46px;
+        font-size: 18px;
+
+}
+
+.nav-link:hover {
+
+    color: #202124;
+
+}
+
+.footer-social {
+
+    display: flex;
+
+    gap: 25px;
+
+    margin-top: 20px;
+
+}
+
+.instagram-icon:hover {
+
+    background-color: #e1306c;
+    color: #d1d5db;
+     width: 46px;
+        height: 46px;
+        font-size: 18px;
+
+}
+
+.footer-social a {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #374151;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 18px;
+
+}
+
+.contact-list li {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+}
+
+.footer hr {
+
+    border-color: #374151;
+
+    margin: 40px 0 25px;
+
+}
+
+.footer-bottom {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+}
+
+.footer-bottom div {
+
+    display: flex;
+
+    gap: 20px;
+
+}
+
+@media (max-width: 768px) {
+
+
+    .footer {
+
+        padding: 50px 0 20px;
+
+    }
+
+    .footer-logo {
+
+        font-size: 1.8rem;
+
+    }
+
+    .footer-description {
+
+        max-width: 100%;
+
+        margin-bottom: 15px;
+
+    }
+
+    .footer h5 {
+
+        margin-top: 10px;
+
+        margin-bottom: 10px;
+
+    }
+
+    .footer-social {
+
+        justify-content: flex-start;
+
+        margin-bottom: 10px;
+
+    }
+
+    .footer-bottom {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 5px;
+
+    }
+
+    .footer-bottom div {
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+    }
+
+       .footer-social Link {
+
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
+
+    }
+
+}
+

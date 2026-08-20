@@ -1,0 +1,33 @@
+.quantity-selector{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.quantity-value{
+
+    min-width:45px;
+
+    text-align:center;
+
+    font-size:1.2rem;
+
+    font-weight:600;
+
+    color:#212529;
+
+}
+
+@media (max-width:768px){
+
+    .quantity-selector{
+
+        justify-content:center;
+
+    }
+
+}

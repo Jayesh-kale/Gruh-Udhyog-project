@@ -1,0 +1,57 @@
+.badge-custom{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.badge-rounded{
+
+    border-radius:50px;
+
+}
+
+.badge-primary{
+
+    background:#E8F5E9;
+
+    color:#2E7D32;
+
+}
+
+.badge-success{
+
+    background:#D4EDDA;
+
+    color:#155724;
+
+}
+
+.badge-danger{
+
+    background:#F8D7DA;
+
+    color:#721C24;
+
+}
+
+.badge-warning{
+
+    background:#FFF3CD;
+
+    color:#856404;
+
+}
+
+.badge-info{
+
+    background:#D1ECF1;
+
+    color:#0C5460;
+
+}

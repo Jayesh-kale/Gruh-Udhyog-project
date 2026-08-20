@@ -1,0 +1,105 @@
+.steps-container{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+}
+
+.step-card{
+
+    flex:1;
+
+    position:relative;
+
+    min-height:260px;
+
+}
+
+.step-number{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:#198754;
+
+    color:#fff;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:0 auto 15px;
+
+    font-size:18px;
+
+}
+
+.step-icon{
+
+    font-size:42px;
+
+    color:#198754;
+
+    margin-bottom:15px;
+
+}
+
+.step-arrow{
+
+    display:flex;
+
+    align-items:center;
+
+    min-width:70px;
+
+}
+
+.line{
+
+    width:50px;
+
+    height:3px;
+
+    background:#198754;
+
+}
+
+.arrow{
+
+    color:#198754;
+
+    font-size:22px;
+
+    margin-left:-2px;
+
+}
+
+@media(max-width:992px){
+
+    .steps-container{
+
+        flex-direction:column;
+
+    }
+
+    .step-arrow{
+
+        transform:rotate(90deg);
+
+        margin:10px 0;
+
+    }
+
+}

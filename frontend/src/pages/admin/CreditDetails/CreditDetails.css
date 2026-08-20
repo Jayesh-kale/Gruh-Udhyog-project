@@ -1,0 +1,97 @@
+
+    container: {
+        fontFamily: '"Segoe UI", Roboto, sans-serif',
+        padding: '32px 16px',
+        backgroundColor: '#f8fafc',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    card: {
+        width: '100%',
+        maxWidth: '800px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
+        padding: '28px',
+        border: '1px solid #e2e8f0',
+        height: 'fit-content'
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottom: '2px solid #f1f5f9',
+        paddingBottom: '20px',
+        marginBottom: '24px',
+    },
+    heading: {
+        fontSize: '24px',
+        fontWeight: '700',
+        color: '#0f172a',
+        margin: 0,
+    },
+    statusBadge: {
+        padding: '6px 14px',
+        borderRadius: '20px',
+        fontSize: '13px',
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
+    },
+    statusPending: {
+        backgroundColor: '#fef3c7',
+        color: '#b45309',
+    },
+    statusSuccess: {
+        backgroundColor: '#d1fae5',
+        color: '#065f46',
+    },
+    grid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '20px 32px',
+    },
+    gridItem: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+    },
+    label: {
+        fontSize: '12px',
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        color: '#94a3b8',
+        letterSpacing: '0.5px'
+    },
+    value: {
+        fontSize: '15px',
+        color: '#334155',
+        fontWeight: '500',
+    },
+    valueCode: {
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        color: '#64748b',
+        backgroundColor: '#f1f5f9',
+        padding: '2px 6px',
+        borderRadius: '4px',
+        width: 'fit-content'
+    },
+    valuePrice: {
+        fontSize: '18px',
+        fontWeight: '600',
+        color: '#0f172a',
+    },
+    valueDue: {
+        fontSize: '18px',
+        fontWeight: '600',
+        color: '#dc2626',
+    },
+    errorText: {
+        padding: '40px',
+        textAlign: 'center',
+        color: '#64748b',
+        fontSize: '16px'
+    }
+

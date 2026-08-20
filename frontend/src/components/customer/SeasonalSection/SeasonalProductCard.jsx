@@ -1,0 +1,47 @@
+import { Button, Card } from "../../common";
+
+
+
+function SeasonalProductCard({ product,icon }) {
+
+    return (
+
+        <Card className="h-100">
+
+            <img
+                src={product.image}
+                alt={product.name}
+                className="img-fluid rounded mb-3"
+            />
+
+            <h5 className="fw-bold">
+                {product.name}
+            </h5>
+
+            <p className="text-muted small mb-2">
+                {product.description}
+            </p>
+
+            <div className="d-flex justify-content-between align-items-center">
+
+                <span className="fw-bold text-success">
+
+                    ₹ {product.defaultOnlinePrice}/kg
+
+                </span>
+
+                <Button>
+
+                    Order Now{<small>{""}{icon}</small>}
+
+                </Button>
+
+            </div>
+
+        </Card>
+
+    );
+
+}
+
+export default SeasonalProductCard;

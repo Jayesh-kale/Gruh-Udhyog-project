@@ -1,0 +1,47 @@
+.custom-btn{
+
+    border:none;
+
+    padding:12px 28px;
+
+    border-radius:50px;
+
+    transition:.3s;
+
+    font-weight:600;
+
+}
+
+.custom-btn-primary{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+.custom-btn-primary:hover{
+
+    background:var(--primary-dark);
+
+}
+
+.custom-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:.3s;
+
+}
+
+.custom-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:var(--shadow-lg);
+
+}
