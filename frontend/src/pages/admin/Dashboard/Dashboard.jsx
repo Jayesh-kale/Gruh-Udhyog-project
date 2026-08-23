@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+import { CiReceipt } from "react-icons/ci";
+import { LuCalendarClock } from "react-icons/lu";
+import { FaBook } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
 import "./Dashboard.css";
 import { getDashboardData } from "../../../services/DashboardService";
-import { Navigate } from "react-router-dom";
 import { Button, Modal } from "../../../components/common";
 
 const Dashboard = () => {
@@ -108,7 +110,7 @@ const Dashboard = () => {
                         <span>Total Orders</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-receipt"></i>
+                            <i className="fa-solid fa-receipt"><CiReceipt /></i>
                         </div>
                     </div>
 
@@ -129,7 +131,7 @@ const Dashboard = () => {
                         <span>Today's Sales</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-indian-rupee-sign"></i>
+                            <i className="fa-solid fa-indian-rupee-sign"><FaIndianRupeeSign /></i>
                         </div>
                     </div>
 
@@ -150,7 +152,7 @@ const Dashboard = () => {
                         <span>Pending Orders</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-clock"></i>
+                            <i className="fa-solid fa-clock"><LuCalendarClock /></i>
                         </div>
                     </div>
 
@@ -171,7 +173,7 @@ const Dashboard = () => {
                         <span>Outstanding Credit</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-book"></i>
+                            <i className="fa-solid fa-book"><FaBook /></i>
                         </div>
                     </div>
 

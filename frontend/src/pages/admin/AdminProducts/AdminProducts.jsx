@@ -19,20 +19,15 @@ const AdminProducts = () => {
 
     const navigate = useNavigate();
 
-    const [products, setProducts] =
-        useState([]);
+    const [products, setProducts] = useState([]);
 
-    const [selectedProduct, setSelectedProduct] =
-        useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
-    const [showForm, setShowForm] =
-        useState(false);
+    const [showForm, setShowForm] = useState(false);
 
-    const [loading, setLoading] =
-        useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [fetching, setFetching] =
-        useState(false);
+    const [fetching, setFetching] = useState(false);
 
 
 
@@ -261,6 +256,7 @@ const AdminProducts = () => {
 
     };
 
+    const totalProducts = products.length;
 
 
     // FORM VIEW
@@ -295,7 +291,6 @@ const AdminProducts = () => {
                             }
 
                         </p>
-
                     </div>
 
                 </div>
@@ -357,7 +352,9 @@ const AdminProducts = () => {
                     <p className="text-muted mb-0">
                         Manage products available to customers.
                     </p>
-
+                    <i className="text-muted mb-0" >
+                        Total Products: {totalProducts}
+                    </i>
                 </div>
 
 
