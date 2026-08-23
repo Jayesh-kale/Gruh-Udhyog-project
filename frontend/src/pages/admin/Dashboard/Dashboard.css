@@ -1,5 +1,4 @@
 .admin-dashboard {
-    padding: 30px;
     max-width: 1600px;
     margin: 0 auto;
 }
@@ -312,7 +311,7 @@
 @media (max-width: 768px) {
 
     .admin-dashboard {
-        padding: 20px 15px;
+        padding: 0px 15px;
     }
 
     .dashboard-header {

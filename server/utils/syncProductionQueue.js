@@ -653,6 +653,16 @@ const saveHistory = (
     currentStage
 ) => {
 
+    const updatedBy =
+        order.editHistory?.at(-1)?.editedBy ||
+        order.customer?.customerId ||
+        null;
+
+    // Keep queue updates working even if history actor is unavailable.
+    if (!updatedBy) {
+        return;
+    }
+
     queue.history.push({
 
         action,
@@ -667,11 +677,15 @@ const saveHistory = (
 
         currentStage,
 
-        updatedBy:
-            order.editHistory?.at(-1)?.editedBy
+        updatedBy
 
     });
 
+};
+
+const toQty = (value) => {
+    const qty = Number(value);
+    return Number.isFinite(qty) ? qty : 0;
 };
 
 
@@ -686,13 +700,15 @@ const addPending = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
-        queue.pendingOnline += qty;
+        queue.pendingOnline += amount;
 
     } else {
 
-        queue.pendingOffline += qty;
+        queue.pendingOffline += amount;
 
     }
 
@@ -713,12 +729,14 @@ const removePending = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
         queue.pendingOnline =
             Math.max(
                 0,
-                queue.pendingOnline - qty
+                queue.pendingOnline - amount
             );
 
     } else {
@@ -726,7 +744,7 @@ const removePending = (
         queue.pendingOffline =
             Math.max(
                 0,
-                queue.pendingOffline - qty
+                queue.pendingOffline - amount
             );
 
     }
@@ -745,13 +763,15 @@ const addPreparing = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
-        queue.preparingOnline += qty;
+        queue.preparingOnline += amount;
 
     } else {
 
-        queue.preparingOffline += qty;
+        queue.preparingOffline += amount;
 
     }
 
@@ -769,12 +789,14 @@ const removePreparing = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
         queue.preparingOnline =
             Math.max(
                 0,
-                queue.preparingOnline - qty
+                queue.preparingOnline - amount
             );
 
     } else {
@@ -782,7 +804,7 @@ const removePreparing = (
         queue.preparingOffline =
             Math.max(
                 0,
-                queue.preparingOffline - qty
+                queue.preparingOffline - amount
             );
 
     }
@@ -801,13 +823,15 @@ const addReady = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
-        queue.readyOnline += qty;
+        queue.readyOnline += amount;
 
     } else {
 
-        queue.readyOffline += qty;
+        queue.readyOffline += amount;
 
     }
 
@@ -825,12 +849,14 @@ const removeReady = (
     qty
 ) => {
 
+    const amount = toQty(qty);
+
     if (orderType === "Online") {
 
         queue.readyOnline =
             Math.max(
                 0,
-                queue.readyOnline - qty
+                queue.readyOnline - amount
             );
 
     } else {
@@ -838,7 +864,7 @@ const removeReady = (
         queue.readyOffline =
             Math.max(
                 0,
-                queue.readyOffline - qty
+                queue.readyOffline - amount
             );
 
     }
@@ -865,7 +891,9 @@ const adjustQuantity = (
     difference
 ) => {
 
-    if (difference === 0) {
+    const delta = toQty(difference);
+
+    if (delta === 0) {
         return;
     }
 
@@ -877,11 +905,11 @@ const adjustQuantity = (
 
             if (orderType === "Online") {
 
-                queue.pendingOnline += difference;
+                queue.pendingOnline += delta;
 
             } else {
 
-                queue.pendingOffline += difference;
+                queue.pendingOffline += delta;
 
             }
 
@@ -892,11 +920,11 @@ const adjustQuantity = (
 
             if (orderType === "Online") {
 
-                queue.preparingOnline += difference;
+                queue.preparingOnline += delta;
 
             } else {
 
-                queue.preparingOffline += difference;
+                queue.preparingOffline += delta;
 
             }
 
@@ -907,11 +935,11 @@ const adjustQuantity = (
 
             if (orderType === "Online") {
 
-                queue.readyOnline += difference;
+                queue.readyOnline += delta;
 
             } else {
 
-                queue.readyOffline += difference;
+                queue.readyOffline += delta;
 
             }
 
@@ -1121,7 +1149,7 @@ const syncProductionQueue = async (
             session
         );
 
-        const qty = item.quantity;
+        const qty = toQty(item.quantity);
 
         const orderType = order.orderType;
 

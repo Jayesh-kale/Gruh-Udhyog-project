@@ -11,10 +11,14 @@ const buildOrderFilter = (query) => {
         toDate
     } = query;
 
-    const filter = {};
+    console.log("Query in buildOrderFilter:", query); // Log the query to see what is being passed
+
+    const filter = {
+        orderStatus: { $ne: "Delivered" }  //Extracted only Order Which is Not Delivered
+    };
 
     // Search
-    if (search) {
+    if (search && search.trim() !== "") {
 
         filter.$or = [
 

@@ -60,7 +60,7 @@ exports.createOrder = async (req, res) => {
 
             customer = {
 
-                customerId: req.body.customer.customerId,
+                customerId: customerData.customerId || null,
 
                 name: req.body.customer.name,
 
@@ -159,7 +159,7 @@ exports.createOrder = async (req, res) => {
                     editHistory: [
                         {
                             action: "Created",
-                            editedBy: req.body.customer.customerId,
+                            editedBy: req.user?.id || customerData.customerId,
                             reason: "Order created."
                         }
                     ]
@@ -210,6 +210,8 @@ exports.getAllOrders = async (req, res) => {
             limit = 10,
             sort = "-createdAt"
         } = req.query;
+
+        console.log("Query Parameters in getAllOrders:", req.query); // Log the query parameters to see what is being passed
 
         const pageNumber = Math.max(1, Number(page) || 1);
 
@@ -315,7 +317,7 @@ exports.getMyOrders = async (req, res) => {
 
             filter = {
 
-                "customer.customerId": req.user._id,
+                "customer.customerId": req.user?.id,
 
                 ...(req.query.orderStatus && {
                     orderStatus: req.query.orderStatus
@@ -490,7 +492,7 @@ exports.updateOrder = async (req, res) => {
 
                 action: "Order Total Updated",
 
-                editedBy: req.user._id,
+                editedBy: req.user?.id,
 
                 reason: `Order total changed from ₹${oldOrder.totalAmount} to ₹${totalAmount}.`
 
@@ -562,6 +564,8 @@ exports.updatePayment = async (req, res) => {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
 
+            await session.abortTransaction();
+
             return sendError(
                 res,
                 400,
@@ -570,31 +574,73 @@ exports.updatePayment = async (req, res) => {
 
         }
 
-        const {
-            amount,
-            paymentMethod
-        } = req.body;
+        const payload = req.body?.obj || req.body;
+        const amount = Number(payload?.paidAmount);
+        const paymentMethod = payload?.paymentMethod;
+
+        // console.log("in updatepayment", req.params);
+        
 
         const order = await Order.findById(id).session(session);
 
         if (!order) {
-            throw new Error("Order not found.");
+
+            await session.abortTransaction();
+
+            return sendError(
+                res,
+                404,
+                "Order not found."
+            );
+
         }
 
         if (order.isLocked) {
-            throw new Error("This order is locked.");
+
+            await session.abortTransaction();
+
+            return sendError(
+                res,
+                400,
+                "This order is locked."
+            );
+
         }
 
-        if (!amount || amount <= 0) {
-            throw new Error("Invalid payment amount.");
+        if (!Number.isFinite(amount) || amount <= 0) {
+
+            await session.abortTransaction();
+
+            return sendError(
+                res,
+                400,
+                "Invalid payment amount."
+            );
+
         }
 
         if (!["Cash", "UPI"].includes(paymentMethod)) {
-            throw new Error("Invalid payment method.");
+
+            await session.abortTransaction();
+
+            return sendError(
+                res,
+                400,
+                "Invalid payment method."
+            );
+
         }
 
         if (amount > order.remainingAmount) {
-            throw new Error("Payment exceeds remaining balance.");
+
+            await session.abortTransaction();
+
+            return sendError(
+                res,
+                400,
+                "Payment exceeds remaining balance."
+            );
+
         }
 
         const newPaidAmount = order.paidAmount + amount;
@@ -630,7 +676,7 @@ exports.updatePayment = async (req, res) => {
 
             action: "Payment Updated",
 
-            editedBy: req.user._id,
+            editedBy: req.user?.id,
 
             reason: `Customer paid ₹${amount} via ${paymentMethod}.`
 
@@ -829,7 +875,7 @@ exports.deleteOrder = async (req, res) => {
 
             action: "Cancelled",
 
-            editedBy: req.user._id,
+            editedBy: req.user?.id,
 
             reason: "Order cancelled by admin."
 

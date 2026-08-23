@@ -2,34 +2,54 @@ import React, { useEffect, useState } from 'react'
 import { Badge, Button, Card, Modal, PageHeader, Pagination, SearchBar, Select } from '../../../components/common';
 import OrderTracker from '../../../components/customer/OrderTracker/OrderTracker';
 
-import { getAllOrders, updateOrderStatus } from '../../../services/orderService';
-import toast, { ToastBar } from 'react-hot-toast';
+import { getAllOrders, updateOrderStatus, updatePaymentAmount } from '../../../services/orderService';
+import toast from 'react-hot-toast';
+import PaymentForm from '../../../components/admin/PaymentForm/PaymentForm';
+
+
 
 const STATUS_FLOW = {
+    Pending: "Confirmed",
     Confirmed: "Preparing",
+    Preparing: "Ready",
     Ready: "Delivered"
 };
 
+const STATUS_ACTION_LABELS = {
+    Pending: "Accept Order",
+    Confirmed: "Send to Production",
+    Preparing: "Mark Ready",
+    Ready: "Mark Delivered"
+};
+
 function Orders() {
+
+    const [filter, setFilter] = useState({
+        search: "",
+        orderStatus: "",
+        orderType: "",
+        paymentStatus: "",
+        fromDate: "",
+        toDate: "",
+        page: 1,
+        limit: 10
+    });
+
+    const [dialogs, setDialogs] = useState({
+        paymentDialog: false,
+        openDetails: false
+    })
 
     const [orders, setOrders] = useState([]);
 
     const [loading, setLoading] = useState(true);
 
-    const [search, setSearch] = useState("");
-
-    const [status, setStatus] = useState("");
-
-    const [orderType, setOrderType] = useState("");
-
-    const [rejectOrder, setRejectOrder] = useState(null);
-    const [rejecting, setRejecting] = useState(false);
-
-    const [acceptOrder, setAcceptOrder] = useState(null);
-
-    const [accepting, setAccepting] = useState(false);
-
-    const [paymentStatus, setPaymentStatus] = useState("");
+    const [orderOperations, setOrderOperations] = useState({
+        accepting: false,
+        rejecting: false,
+        rejectOrder: null,
+        acceptOrder: null
+    });
 
     const [page, setPage] = useState(1);
 
@@ -37,13 +57,9 @@ function Orders() {
 
     const [selectedOrder, setSelectedOrder] = useState(null);
 
-    const [openDetails, setOpenDetails] = useState(false);
-
     useEffect(() => {
-
         loadOrders();
-
-    }, [page, search, status, orderType, paymentStatus]);
+    }, [filter, orderOperations.acceptOrder, orderOperations.rejectOrder, orderOperations.paymentUpdate, page]);
 
     async function loadOrders() {
 
@@ -51,18 +67,20 @@ function Orders() {
 
             setLoading(true);
 
-            const res = await getAllOrders({
-                page,
-                limit: 10,
-                search: search || undefined,
-                orderStatus: status || undefined,
-                orderType: orderType || undefined,
-                paymentStatus: paymentStatus || undefined
-            });
+            // const res = await getAllOrders({
+            //     page,
+            //     limit: 10,
+            //     search: search || undefined,
+            //     orderStatus: status || undefined,
+            //     orderType: orderType || undefined,
+            //     paymentStatus: paymentStatus || undefined
+            // });
+            const res = await getAllOrders(filter);
+            setOrders(res?.data?.orders || []);
 
-            setOrders(res.data.orders);
+            console.log("in Admin Orders.jsx", res?.data?.orders)
 
-            setPagination(res.data.pagination);
+            setPagination(res?.data?.pagination || {});
 
         }
 
@@ -84,79 +102,85 @@ function Orders() {
 
     }
 
+    //for updating the Payment Status
+    const handlePayment = async (id, order) => {
+        setDialogs(prev => ({ ...prev, openDetails: false }));
+        setSelectedOrder(order);
+        setDialogs(prev => ({ ...prev, paymentDialog: true }));
+    }
+
     const confirmAccept = async () => {
 
-    if (!acceptOrder) return;
+        if (!orderOperations.acceptOrder) return;
+        try {
 
-    try {
+            setOrderOperations(prev => ({ ...prev, accepting: true }));
 
-        setAccepting(true);
+            const res = await updateOrderStatus(
+                orderOperations.acceptOrder._id,
+                "Confirmed"
+            );
 
-        const res = await updateOrderStatus(
-            acceptOrder._id,
-            "Confirmed"
-        );
+            const updatedOrder = res?.data?.order || res?.order;
 
-        const updatedOrder = res?.data?.order;
+            toast.success(
+                "Order accepted successfully!"
+            );
 
-        ToastBar.success(
-            "Order accepted successfully!"
-        );
+            if (updatedOrder) {
 
-        if (updatedOrder) {
+                setOrders(prev =>
+                    prev.map(order =>
+                        order._id === updatedOrder._id
+                            ? updatedOrder
+                            : order
+                    )
+                );
 
-            setOrders(prev =>
-                prev.map(order =>
-                    order._id === updatedOrder._id
+                setSelectedOrder(prev =>
+                    prev?._id === updatedOrder._id
                         ? updatedOrder
-                        : order
-                )
+                        : prev
+                );
+
+            } else {
+
+                await loadOrders();
+
+            }
+
+            setOrderOperations(prev => ({ ...prev, acceptOrder: null }));
+
+        } catch (error) {
+
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to accept order."
             );
 
-            setSelectedOrder(prev =>
-                prev?._id === updatedOrder._id
-                    ? updatedOrder
-                    : prev
-            );
+        } finally {
 
-        } else {
-
-            await loadOrders();
+            setOrderOperations(prev => ({ ...prev, accepting: false }));
 
         }
 
-        setAcceptOrder(null);
-
-    } catch (error) {
-
-        ToastBar.error(
-            error?.response?.data?.message ||
-            "Failed to accept order."
-        );
-
-    } finally {
-
-        setAccepting(false);
-
-    }
-
-};
+    };
 
     const confirmReject = async () => {
 
-        if (!rejectOrder) return;
+        if (!orderOperations.rejectOrder) return;
 
         try {
 
-            setRejecting(true);
+            setOrderOperations(prev => ({ ...prev, rejecting: true }));
 
             const res = await updateOrderStatus(
-                rejectOrder._id,
+                orderOperations.rejectOrder._id,
                 "Cancelled"
             );
 
-            const updatedOrder = res?.data?.order;
-             ToastBar.success("Order rejected successfully!");
+            const updatedOrder = res?.data?.order || res?.order;
+            toast.success("Order rejected successfully!");
             if (updatedOrder) {
 
                 setOrders(prev =>
@@ -179,7 +203,7 @@ function Orders() {
 
             }
 
-            setRejectOrder(null);
+            setOrderOperations(prev => ({ ...prev, rejectOrder: null }));
 
         } catch (error) {
 
@@ -191,20 +215,20 @@ function Orders() {
 
         } finally {
 
-            setRejecting(false);
+            setOrderOperations(prev => ({ ...prev, rejecting: false }));
 
         }
     };
 
     //for opening the dialog box for order details before accepting
     const handleAccept = (order) => {
-        setAcceptOrder(order);
+        setOrderOperations(prev => ({ ...prev, acceptOrder: order }));
     };
 
 
     //for opening the dialog box for order details brfore rejecting
     const handleReject = (order) => {
-        setRejectOrder(order);
+        setOrderOperations(prev => ({ ...prev, rejectOrder: order }));
     };
 
     const handleStatus = async (order) => {
@@ -218,7 +242,9 @@ function Orders() {
 
         try {
             const res = await updateOrderStatus(order._id, nextStatus);
-            const updatedOrder = res?.data?.order;
+            const updatedOrder = res?.data?.order || res?.order;
+            console.log(`Order ${order.orderNumber} status updated to ${nextStatus}.`, updatedOrder);
+            toast.success(`Order marked as ${nextStatus}.`);
 
             if (updatedOrder) {
                 setOrders(prev => prev.map(item => item._id === updatedOrder._id ? updatedOrder : item));
@@ -227,6 +253,7 @@ function Orders() {
                 await loadOrders();
             }
         } catch (error) {
+            toast.error(error?.response?.data?.message || "Failed to update order status.");
             console.error("Failed to update order status:", error?.response?.data?.message || error.message);
         }
     }
@@ -235,18 +262,26 @@ function Orders() {
 
     return (
         <div>
+            {/* Payment Update Form */}
+            <PaymentForm
+                dialogs={dialogs}
+                setDialogs={setDialogs}
+                selectedOrder={selectedOrder}
+                setSelectedOrder={(e) => setSelectedOrder(e)}
+            />
+
             <PageHeader title="Orders Management" subtitle="Manage online and offline orders" />
             <div className="order-filters">
 
                 <SearchBar
 
-                    value={search}
+                    value={filter.search}
 
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => setFilter({ ...filter, search: e.target.value })}
 
                 />
 
-                <Select value={status} onChange={(e) => setStatus(e.target.value)}
+                <Select value={filter.orderStatus} onChange={(e) => setFilter({ ...filter, orderStatus: e.target.value })}
                     options={[
 
                         { label: "Pending", value: "Pending" },
@@ -261,7 +296,7 @@ function Orders() {
 
                     ]} />
 
-                <Select value={orderType} onChange={(e) => setOrderType(e.target.value)}
+                <Select value={filter.orderType} onChange={(e) => setFilter({ ...filter, orderType: e.target.value })}
                     options={[
 
                         { label: "Online", value: "Online" },
@@ -269,7 +304,7 @@ function Orders() {
                         { label: "Offline", value: "Offline" }
                     ]} />
 
-                <Select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}
+                <Select value={filter.paymentStatus} onChange={(e) => setFilter({ ...filter, paymentStatus: e.target.value })}
                     options={[
 
                         { label: "Pending", value: "Pending" },
@@ -278,6 +313,38 @@ function Orders() {
 
                         { label: "Paid", value: "Paid" }
                     ]} />
+
+                {/* <input type="date" value={filter.fromDate} onChange={(e) => setFilter({ ...filter, fromDate: e.target.value })} />
+                <input type="date" value={filter.toDate} onChange={(e) => setFilter({ ...filter, toDate: e.target.value })} /> */}
+                <div className="row g-3 align-items-center m-1  mb-3">
+                    <div className="col-md-6 col-sm-12">
+                        <div className="form-floating">
+                            <input
+                                type="date"
+                                className="form-control"
+                                id="fromDate"
+                                placeholder="From Date"
+                                value={filter.fromDate}
+                                onChange={(e) => setFilter({ ...filter, fromDate: e.target.value })}
+                            />
+                            <label htmlFor="fromDate">From Date</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-6 col-sm-12">
+                        <div className="form-floating">
+                            <input
+                                type="date"
+                                className="form-control"
+                                id="toDate"
+                                placeholder="To Date"
+                                value={filter.toDate}
+                                onChange={(e) => setFilter({ ...filter, toDate: e.target.value })}
+                            />
+                            <label htmlFor="toDate">To Date</label>
+                        </div>
+                    </div>
+                </div>
 
                 {
 
@@ -342,10 +409,11 @@ function Orders() {
                                 <Button
                                     onClick={() => {
                                         setSelectedOrder(order);
-                                        setOpenDetails(true);
+                                        setDialogs(prev => ({ ...prev, openDetails: true }));
                                     }}
+
                                 >
-                                    View
+                                    {order.orderStatus === "Cancelled" ? "Order Cancelled" : "View Order"}
                                 </Button>
 
 
@@ -425,11 +493,14 @@ function Orders() {
 
                 <Modal
 
-                    open={openDetails}
+                    open={dialogs.openDetails}
 
                     title={selectedOrder?.orderNumber}
 
-                    onClose={() => setOpenDetails(false)}>
+                    onClose={() => {
+                        setDialogs(prev => ({ ...prev, openDetails: false }))
+                        setSelectedOrder(null);
+                    }}>
 
 
                     {
@@ -474,6 +545,11 @@ function Orders() {
                                     <p>
 
                                         Order Type : {selectedOrder.orderType}
+
+                                    </p>
+                                    <p>
+
+                                        Order Created At : {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "N/A"}
 
                                     </p>
 
@@ -578,13 +654,18 @@ function Orders() {
 
                                         selectedOrder.paymentHistory?.map((payment, index) => (
 
-                                            <div key={index}>
+                                            <li key={index}>
 
                                                 ₹{payment.amount}
 
-                                                {payment.paymentMethod}
+                                                {" " + payment.paymentMethod}
+                                                <br />
+                                                <small>
+                                                    Date: {new Date(payment.paidAt).toLocaleDateString()}
+                                                </small>
 
-                                            </div>
+                                            </li>
+
 
                                         ))
 
@@ -669,16 +750,9 @@ function Orders() {
                                         selectedOrder.editHistory?.map((history, index) => (
 
                                             <div key={index}>
-
-                                                <p>
-
-                                                    {history.action}
-
-                                                </p>
-
                                                 <small>
 
-                                                    {history.reason}
+                                                    {index + 1}.   {history.reason}
 
                                                 </small>
 
@@ -691,21 +765,21 @@ function Orders() {
                                 </Card>
                                 <div className="modal-actions">
 
-                                    <Button >
+                                    <Button onClick={() => handlePayment(selectedOrder.id, selectedOrder)} disabled={selectedOrder.orderStatus === "Cancelled"}>
 
                                         Update Payment
 
                                     </Button>
 
-                                    <Button variant="warning" onClick={() => { handleStatus(selectedOrder) }}>
+                                    <Button variant="warning" onClick={() => { handleStatus(selectedOrder) }} disabled={selectedOrder.orderStatus === "Cancelled"}>
 
-                                        Update Status
+                                        {STATUS_ACTION_LABELS[selectedOrder.orderStatus] || "Update Status"}
 
                                     </Button>
 
                                     <Button
                                         variant="secondary"
-                                        onClick={() => setOpenDetails(false)}
+                                        onClick={() => setDialogs(prev => ({ ...prev, openDetails: false }))}
                                     >
 
                                         Close
@@ -723,11 +797,11 @@ function Orders() {
                 </Modal>
                 {/* for displaying the reject order dialog box */}
                 <Modal
-                    open={!!rejectOrder}
+                    open={!!orderOperations.rejectOrder}
                     title="Reject Order"
                     onClose={() => {
-                        if (!rejecting) {
-                            setRejectOrder(null);
+                        if (!orderOperations.rejecting) {
+                            setOrderOperations(prev => ({ ...prev, rejectOrder: null }));
                         }
                     }}
                 >
@@ -743,7 +817,7 @@ function Orders() {
 
                         <p>
                             Are you sure you want to reject order
-                            <strong> #{rejectOrder?.orderNumber}</strong>?
+                            <strong> #{orderOperations.rejectOrder?.orderNumber}</strong>?
                         </p>
 
                         <p className="reject-warning">
@@ -754,18 +828,18 @@ function Orders() {
 
                             <Button
                                 variant="secondary"
-                                disabled={rejecting}
-                                onClick={() => setRejectOrder(null)}
+                                disabled={orderOperations.rejecting}
+                                onClick={() => setOrderOperations(prev => ({ ...prev, rejectOrder: null }))}
                             >
                                 Keep Order
                             </Button>
 
                             <Button
                                 variant="danger"
-                                disabled={rejecting}
+                                disabled={orderOperations.rejecting}
                                 onClick={confirmReject}
                             >
-                                {rejecting
+                                {orderOperations.rejecting
                                     ? "Rejecting..."
                                     : "Reject Order"
                                 }
@@ -778,11 +852,11 @@ function Orders() {
 
                 {/* for displaying the accept order dialog box */}
                 <Modal
-                    open={!!acceptOrder}
+                    open={!!orderOperations.acceptOrder}
                     title="Accept Order"
                     onClose={() => {
-                        if (!accepting) {
-                            setAcceptOrder(null);
+                        if (!orderOperations.accepting) {
+                            setOrderOperations(prev => ({ ...prev, acceptOrder: null }));
                         }
                     }}
                 >
@@ -798,7 +872,7 @@ function Orders() {
 
                         <p>
                             Are you sure you want to accept
-                            <strong> #{acceptOrder?.orderNumber}</strong>?
+                            <strong> #{orderOperations.acceptOrder?.orderNumber}</strong>?
                         </p>
 
                         <p className="accept-info">
@@ -810,18 +884,18 @@ function Orders() {
 
                             <Button
                                 variant="secondary"
-                                disabled={accepting}
-                                onClick={() => setAcceptOrder(null)}
+                                disabled={orderOperations.accepting}
+                                onClick={() => setOrderOperations(prev => ({ ...prev, acceptOrder: null }))}
                             >
                                 Cancel
                             </Button>
 
                             <Button
                                 variant="success"
-                                disabled={accepting}
+                                disabled={orderOperations.accepting}
                                 onClick={confirmAccept}
                             >
-                                {accepting
+                                {orderOperations.accepting
                                     ? "Accepting..."
                                     : "Accept Order"
                                 }

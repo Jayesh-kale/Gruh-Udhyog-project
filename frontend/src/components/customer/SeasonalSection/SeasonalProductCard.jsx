@@ -1,4 +1,4 @@
-import { Button, Card } from "../../common";
+import { Badge, Button, Card } from "../../common";
 
 
 
@@ -7,6 +7,10 @@ function SeasonalProductCard({ product,icon }) {
     return (
 
         <Card className="h-100">
+
+            <Badge className="m-3" variant="success">
+                <small>{product.season?.join(", ")}</small>
+            </Badge>
 
             <img
                 src={product.image}

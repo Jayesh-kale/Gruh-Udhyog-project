@@ -20,9 +20,7 @@ const {
 
 const upload = require("../middleware/upload");
 
-// ==========================
 // Public Routes
-// ==========================
 
 // Get all products
 router.get("/", getAllProducts);
@@ -43,7 +41,7 @@ router.get("/:id", getProductById);
 
 // Create Product
 router.post(
-    "/",
+    "/createProduct",
     verifyToken,
     isAdmin,
     upload.single("image"),

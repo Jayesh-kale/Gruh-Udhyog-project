@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getCreditBookData } from '../../../services/creditBookService';
 import { useNavigate } from 'react-router-dom';
+import SearchBar from '../../../components/common/SearchBar/SearchBar.jsx';
+
 
 const CreditBook = () => {
     const navigate = useNavigate();
     // 1. Initialize state with the full data object
     const [creditBookData, setCreditBookData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // 2. Function to fetch credit book data
     const fetchCreditBookData = async () => {
@@ -23,14 +26,109 @@ const CreditBook = () => {
         fetchCreditBookData();
     }, []);
 
+    //For search functionality
+    const handleSearchChange = (e) => {
+        const { value } = e.target;
+        setSearchTerm(value);
+        if (value) {
+            setCreditBookData(prev => ({
+                ...prev,
+                creditEntries: prev.creditEntries.filter(entry =>
+                    entry.customerName.toLowerCase().includes(value.toLowerCase()) ||
+                    entry.customerPhone.includes(value) ||
+                    entry.productSummary.toLowerCase().includes(value.toLowerCase())
+
+                )
+            }));
+        }
+        else {
+            fetchCreditBookData();
+        }
+    };
+
+    const handleChange = (e) => {
+        const selectedStatus = e.target.value;
+        if (selectedStatus) {
+            setCreditBookData(prev => ({
+                ...prev,
+                creditEntries: prev.creditEntries.filter(entry => entry.status === selectedStatus)
+            }));
+        }
+        else {
+            fetchCreditBookData();
+        }
+    }
+
     const handleViewDetails = (entry) => {
         navigate(`/admin/personDetails`, { state: { record: entry } });
     }
 
+    const calculateTotalAmount = () => {
+        if (!creditBookData.creditEntries) return 0;
+        const totalAmount = creditBookData.creditEntries.reduce((total, entry) => total + entry.totalAmount, 0);
+        return totalAmount;
+    }
+
+    const calculateTotalRemaining = () => {
+        if (!creditBookData.creditEntries) return 0;
+        const totalRemaining = creditBookData.creditEntries.reduce((total, entry) => total + entry.remainingAmount, 0);
+        return totalRemaining;
+    }
+
     return (
         <div className="credit-book-container items-center justify-center">
-            <h1>Credit Book</h1>
+                    <h1 className="h3 mb-1 text-dark fw-bold tracking-tight">Credit Book</h1>
 
+            <div className="d-flex flex-row align-items-center justify-content-between mb-4 p-3 bg-light rounded shadow-sm">
+
+                {/* LEFT SECTION: Title & Filter */}
+                <div className="d-flex flex-column gap-1">
+                    <div className="d-flex align-items-center gap-2">
+                        <label htmlFor="selectBox" className="form-label mb-0 text-muted small fw-medium">Records:</label>
+                        <select
+                            id='selectBox'
+                            name='status'
+                            className="form-select form-select-sm border-secondary-subtle"
+                            style={{ width: '140px' }}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Cleared">Cleared</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* MIDDLE SECTION: Search Bar */}
+                <div className="mx-3 flex-grow-1" style={{ maxWidth: '400px' }}>
+                    <SearchBar
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search credit entries..."
+                    // Note: If SearchBar is a custom component, ensure it applies Bootstrap's 'form-control' internally
+                    />
+                </div>
+
+                {/* RIGHT SECTION: Styled Amount Cards */}
+                <div className="d-flex flex-row gap-3 align-items-center">
+                    {/* Total Amount Badge */}
+                    <div className="card border-0 shadow-sm bg-dark text-white overflow-hidden" style={{ minWidth: "180px" }}>
+                        <div className="card-body p-2 text-center">
+                            <div className="text-uppercase text-white-50 small fw-bold" style={{ fontSize: '0.75rem' }}>Total Amount</div>
+                            <div className="fs-5 fw-semibold text-warning">{calculateTotalAmount()} /-</div>
+                        </div>
+                    </div>
+
+                    {/* Remaining Amount Badge */}
+                    <div className="card border-0 shadow-sm bg-danger text-white overflow-hidden" style={{ minWidth: "190px" }}>
+                        <div className="card-body p-2 text-center">
+                            <div className="text-uppercase text-white-50 small fw-bold" style={{ fontSize: '0.75rem' }}>Remaining Amount</div>
+                            <div className="fs-5 fw-semibold">{calculateTotalRemaining()} /-</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <p>{creditBookData.totalRecords} credit entries found.</p>
             <div style={{ overflowX: 'auto', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', backgroundColor: '#ffffff' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Arial, sans-serif', textAlign: 'left', minWidth: '800px' }}>
@@ -95,7 +193,7 @@ const CreditBook = () => {
                 </table>
             </div>
 
-        </div>
+        </div >
     );
 };
 

@@ -226,6 +226,7 @@ const ProductionQueue = () => {
                         value={dashboard.totalPending}
                         online={dashboard.pendingOnline} 
                         offline={dashboard.pendingOffline}
+                        unit = "Kg"
                     />
 
                     <DashboardCard className="dashboard-card"
@@ -233,6 +234,7 @@ const ProductionQueue = () => {
                         value={dashboard.totalPreparing}
                         online={dashboard.preparingOnline}
                         offline={dashboard.preparingOffline}
+                        unit = "Kg"
                     />
 
                     <DashboardCard className="dashboard-card"
@@ -240,6 +242,7 @@ const ProductionQueue = () => {
                         value={dashboard.totalReady}
                         online={dashboard.readyOnline} 
                         offline={dashboard.readyOffline}
+                        unit = "Kg"
                     />
 
                     <div className="dashboard-card products-card">
@@ -265,7 +268,7 @@ const ProductionQueue = () => {
 
             {/* INCOMING ORDERS */}
 
-            <section className="section-block">
+            {/* <section className="section-block">
 
                 <div className="section-header">
 
@@ -322,7 +325,7 @@ const ProductionQueue = () => {
 
                 )}
 
-            </section>
+            </section> */}
 
 
             {/* PRODUCTION QUEUE*/}
@@ -411,7 +414,8 @@ const DashboardCard = ({
     title,
     value,
     online,
-    offline
+    offline,
+    unit
 }) => {
 
     return (
@@ -419,21 +423,21 @@ const DashboardCard = ({
         <div className="dashboard-card">
 
             <span className="dashboard-label">
-                {title.toUpperCase()}
+                {title.toUpperCase()} 
             </span>
 
             <strong>
-                {value}
+                {value} {unit}
             </strong>
 
             <div className="dashboard-split">
 
                 <span>
-                    Online {online}
+                    Online {online} {unit}
                 </span>
                 {" | "}
                 <span>
-                    Offline {offline}
+                    Offline {offline} {unit}
                 </span>
 
             </div>

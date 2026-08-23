@@ -171,10 +171,14 @@ exports.createProduct = async (req, res) => {
             description,
             defaultOnlinePrice,
             unit,
+            isFeatured = false,
             isListedOnline = true,
+            displayOrder = 0,
             isSeasonal = false,
             season = null
         } = req.body;
+
+
 
         if (!name || !category || !unit) {
 
@@ -215,9 +219,9 @@ exports.createProduct = async (req, res) => {
             );
 
         }
-        // ==========================
+       
         // Check Duplicate Product
-        // ==========================
+       
         const existingProduct = await Product.findOne({
 
             name: {
@@ -244,9 +248,9 @@ exports.createProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Upload Image to Cloudinary
-        // ==========================
+       
         
 
         if (req.file) {
@@ -257,9 +261,9 @@ exports.createProduct = async (req, res) => {
             );
 
         }
-        // ==========================
+       
         // Create Product
-        // ==========================
+       
         const product = await Product.create({
 
             name: name.trim(),
@@ -274,7 +278,11 @@ exports.createProduct = async (req, res) => {
 
             defaultOnlinePrice,
 
+            displayOrder,
+
             unit,
+
+            isFeatured,
 
             isListedOnline,
 
@@ -284,9 +292,9 @@ exports.createProduct = async (req, res) => {
 
         });
 
-        // ==========================
+       
         // Success Response
-        // ==========================
+       
         return sendSuccess(
 
             res,
@@ -329,9 +337,9 @@ exports.updateProduct = async (req, res) => {
 
         const { id } = req.params;
 
-        // ==========================
+       
         // Validate Product Id
-        // ==========================
+       
         if (!mongoose.Types.ObjectId.isValid(id)) {
 
             return sendError(
@@ -342,9 +350,9 @@ exports.updateProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Find Product
-        // ==========================
+       
         const product = await Product.findById(id);
 
         if (!product) {
@@ -357,9 +365,9 @@ exports.updateProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Read Request Body
-        // ==========================
+       
         const {
             name,
             category,
@@ -372,9 +380,9 @@ exports.updateProduct = async (req, res) => {
             season
         } = req.body;
 
-        // ==========================
+       
         // Business Validation
-        // ==========================
+       
         const finalIsSeasonal =
             isSeasonal !== undefined
                 ? isSeasonal
@@ -405,9 +413,9 @@ exports.updateProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Duplicate Validation
-        // ==========================
+       
         const duplicateProduct = await Product.findOne({
 
             _id: { $ne: id },
@@ -435,9 +443,9 @@ exports.updateProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Upload New Image (Optional)
-        // ==========================
+       
         if (req.file) {
 
             oldPublicId = product.image.public_id;
@@ -454,9 +462,9 @@ exports.updateProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Update Fields
-        // ==========================
+       
         if (name !== undefined)
             product.name = name.trim();
 
@@ -485,23 +493,23 @@ exports.updateProduct = async (req, res) => {
             ? finalSeason.trim()
             : null;
 
-        // ==========================
+       
         // Save Product
-        // ==========================
+       
         await product.save();
 
-        // ==========================
+       
         // Delete Old Image
-        // ==========================
+       
         if (oldPublicId) {
 
             await cloudinary.uploader.destroy(oldPublicId);
 
         }
 
-        // ==========================
+       
         // Success Response
-        // ==========================
+       
         return sendSuccess(
             res,
             200,
@@ -511,9 +519,9 @@ exports.updateProduct = async (req, res) => {
 
     } catch (error) {
 
-        // ==========================
+       
         // Rollback Cloudinary Upload
-        // ==========================
+       
         if (newUploadedImage?.public_id) {
 
             await cloudinary.uploader.destroy(
@@ -539,9 +547,9 @@ exports.deleteProduct = async (req, res) => {
 
         const { id } = req.params;
 
-        // ==========================
+       
         // Validate Product Id
-        // ==========================
+       
         if (!mongoose.Types.ObjectId.isValid(id)) {
 
             return sendError(
@@ -552,9 +560,9 @@ exports.deleteProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Find Product
-        // ==========================
+       
         const product = await Product.findById(id);
 
         if (!product) {
@@ -567,9 +575,9 @@ exports.deleteProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Already Deleted?
-        // ==========================
+       
         if (!product.isActive) {
 
             return sendError(
@@ -580,9 +588,9 @@ exports.deleteProduct = async (req, res) => {
 
         }
 
-        // ==========================
+       
         // Soft Delete
-        // ==========================
+       
         product.isActive = false;
 
         await product.save();

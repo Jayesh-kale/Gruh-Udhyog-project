@@ -24,7 +24,7 @@ const syncCreditBook = async (order, session) => {
         await CreditBook.create(
             [
                 {
-                    customerId: order.customer.customerId,
+                    customerId: order.customer.customerId || null,
 
                     customerName: order.customer.name,
 

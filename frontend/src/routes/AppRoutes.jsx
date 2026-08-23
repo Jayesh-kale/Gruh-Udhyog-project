@@ -13,7 +13,8 @@ import ForgetPassword from "../pages/auth/ForgetPassword";
 
 // Admin Pages
 import Dashboard from "../pages/admin/Dashboard/Dashboard.jsx";
-import AdminProducts from "../pages/admin/AdminProducts";
+import AdminProducts from "../pages/admin/AdminProducts/AdminProducts";
+import CreateOrder from "../pages/admin/CreateOrder/CreateOrder";
 import Orders from "../pages/admin/Orders/Orders";
 import ProductionQueue from "../pages/admin/ProductionQueue/ProductionQueue";
 import CreditBook from "../pages/admin/CreditBook/CreditBook";
@@ -137,6 +138,11 @@ function AppRoutes() {
                     <Route
                         path="products"
                         element={<AdminProducts />}
+                    />
+
+                    <Route
+                        path="create-order"
+                        element={<CreateOrder />}
                     />
 
                     <Route

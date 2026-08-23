@@ -5,7 +5,7 @@ const creditBook = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        default: null
     },
 
     customerName: {

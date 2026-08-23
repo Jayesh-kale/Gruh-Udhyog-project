@@ -67,7 +67,7 @@ const Dashboard = () => {
 
     return (
 
-        <section className="admin-dashboard">
+        <section className="admin-dashboard container-fluid">
 
             {/* ================= HEADER ================= */}
 

@@ -35,6 +35,11 @@ function Sidebar() {
         },
 
         {
+            title: "Create Orders",
+            path: "/admin/create-order"
+        },
+
+        {
             title: "Production Queue",
             path: "/admin/production-queue"
         },
@@ -83,7 +88,7 @@ return (
                 {
                     menuItems.map((item) => (
 
-                        <NavLink className="" key={item.path} to={item.path} className="d-block text-decoration-none text-white mb-3">
+                        <NavLink key={item.path} to={item.path} className="d-block text-decoration-none text-white mb-3">
                             {item.title}
                         </NavLink>
 

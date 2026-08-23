@@ -72,8 +72,8 @@ const product = new mongoose.Schema(
     },
 
     season: {
-      type: String,
-      default: null,
+      type: [String],
+      default: [],
       trim: true,
     },
 
