@@ -74,7 +74,7 @@ function Cart() {
 
     return (
 
-        <section className="cart-page container py-5">
+        <section className="cart-page container" data-aos="fade-up">
 
             <PageHeader
 

@@ -27,7 +27,7 @@ import Cart from "../pages/customer/Cart/Cart";
 import Products from "../pages/customer/Products/Products"
 import Checkout from "../pages/customer/Checkout/Checkout";
 import CustomerOrders from "../pages/customer/Orders/Orders";
-import Profile from "../pages/customer/Profile";
+import Profile from "../pages/customer/Profile/Profile.jsx";
 import CreditDetails from "../pages/admin/CreditDetails/CreditDetails.jsx";
 // import Unauthorized from "../pages/Unauthorized";
 // import NotFound from "../pages/NotFound";

@@ -10,7 +10,8 @@ import { AuthProvider } from "./services/context/authContext.jsx";
 import { CartProvider } from "./services/context/CartContext";
 
 // Bootstrap
-import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Styles
 import "./assets/styles/variables.css";

@@ -14,6 +14,7 @@ import EmptyState from "../../../components/common/EmptyState";
 
 import { getMyOrders } from "../../../services/orderService";
 import { Modal } from "../../../components/common";
+import PaymentForm from "../../../components/admin/PaymentForm/PaymentForm"
 
 function Orders() {
 
@@ -24,6 +25,7 @@ function Orders() {
     //To View Order Details
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showPaymentModel, setShowPaymentModel] = useState(false);
 
 
     useEffect(() => {
@@ -39,6 +41,7 @@ function Orders() {
 
             const response = await getMyOrders();
 
+            console.log("Orders Response:", response.data.orders);
             setOrders(response.data.orders);
 
         }
@@ -51,6 +54,12 @@ function Orders() {
 
     }
 
+    const handlePayment = async(order) =>{
+
+        setSelectedOrder(order);
+
+        setShowPaymentModel(true);
+    }
 
     function handleViewOrder(order) {
 
@@ -59,7 +68,6 @@ function Orders() {
         setShowModal(true);
 
     }
-
 
     if (loading) {
 
@@ -90,7 +98,7 @@ function Orders() {
 
     return (
 
-        <section className="container py-5">
+        <section className="container">
 
             <PageHeader
 
@@ -99,6 +107,9 @@ function Orders() {
                 subtitle="Track your recent orders"
 
             />
+
+            {/* To Track Order Status */}
+            <OrderTracker status={selectedOrder?.orderStatus} />
 
             <div className="orders-grid">
 
@@ -195,12 +206,20 @@ function Orders() {
                                     {order.paymentMethod}
 
                                 </p>
+                                <div>
+                                   {order.paymentStatus !== "Paid" && (
+                                        <button type="button" class="btn btn-outline-success">
 
-                                <Button onClick={() => handleViewOrder(order)}>
+                                         Pay Now
 
-                                    View Details
+                                        </button>
+                                    )}
+                                    <button type="button" class="btn btn-outline-secondary m-1" onClick={() => handleViewOrder(order)}>
 
-                                </Button>
+                                        View Details
+
+                                    </button>
+                                </div>
 
                             </div>
 
@@ -212,15 +231,11 @@ function Orders() {
 
             </div>
 
-            <OrderTracker status={selectedOrder.orderStatus} />
-
-            //pop-up to display orders
+            {/* //pop-up to display orders */}
             <Modal
 
                 open={showModal}
-
                 title={selectedOrder?.orderNumber || "Order Details"}
-
                 onClose={() => setShowModal(false)}>
 
                 {
@@ -235,16 +250,16 @@ function Orders() {
 
                                 <Badge
                                     variant={
-                                        selectedOrder.orderStatus === "Pending"
+                                        selectedOrder?.orderStatus === "Pending"
                                             ? "warning"
-                                            : selectedOrder.orderStatus === "Ready"
+                                            : selectedOrder?.orderStatus === "Ready"
                                                 ? "success"
-                                                : selectedOrder.orderStatus === "Cancelled"
+                                                : selectedOrder?.orderStatus === "Cancelled"
                                                     ? "danger"
                                                     : "primary"
                                     }>
 
-                                    {selectedOrder.orderStatus}
+                                    {selectedOrder?.orderStatus}
 
                                 </Badge>
 
@@ -256,7 +271,7 @@ function Orders() {
 
                                 <strong>
 
-                                    {selectedOrder.paymentMethod}
+                                    {selectedOrder?.paymentMethod}
 
                                 </strong>
 
@@ -268,7 +283,7 @@ function Orders() {
 
                                 <Badge variant="info">
 
-                                    {selectedOrder.paymentStatus}
+                                    {selectedOrder?.paymentStatus}
 
                                 </Badge>
 
@@ -280,7 +295,7 @@ function Orders() {
 
                                 <strong>
 
-                                    {selectedOrder.customer.village}
+                                    {selectedOrder?.customer?.village}
 
                                 </strong>
 
@@ -296,7 +311,7 @@ function Orders() {
 
                             {
 
-                                selectedOrder.items.map(item => (
+                                selectedOrder.items?.map(item => (
 
                                     <div
 
@@ -350,7 +365,7 @@ function Orders() {
 
                                 <strong>
 
-                                    ₹{selectedOrder.totalAmount}
+                                    ₹{selectedOrder?.totalAmount}
 
                                 </strong>
 
@@ -363,7 +378,6 @@ function Orders() {
                 }
 
             </Modal>
-
         </section>
 
     );

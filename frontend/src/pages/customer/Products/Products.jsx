@@ -135,7 +135,7 @@ function Products() {
 
     return (
 
-        <section className="products-page container py-5">
+        <section className="products-page container">
 
             <div
                 data-aos="fade-down"

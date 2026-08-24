@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import "./OrderTracker.css";
+
 
 const steps = [
 
@@ -17,7 +19,6 @@ const steps = [
 function OrderTracker({ status }) {
 
     const currentStep = steps.indexOf(status);
-
     return (
 
         <div className="order-tracker">
@@ -31,7 +32,8 @@ function OrderTracker({ status }) {
                         <div className={`tracker-circle ${index <= currentStep ? "active" : ""}`}>
                             {
 
-                                index < currentStep ? "✓" : index === currentStep? "●" : ""
+                                index < currentStep ? "✓" : index === currentStep ? "●" : ""
+
 
                             }
 

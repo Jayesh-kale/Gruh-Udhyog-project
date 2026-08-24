@@ -17,7 +17,8 @@ const NavBar = () => {
         window.dispatchEvent(new Event('storage')); // Trigger storage event to notify other components
     }
 
-    const handleLogout = async () => {
+    const handleLogout = async (e) => {s
+        e.preventDefault();
         await logoutUser();
         navigate("/login");
     };

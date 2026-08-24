@@ -4,6 +4,7 @@ import {
     FiUser,
     FiMenu,
     FiX,
+    FiLogOut,
     
 } from "react-icons/fi";
 
@@ -15,6 +16,7 @@ import "./Navbar.css";
 function Navbar() {
 
     const [mobileMenu, setMobileMenu] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
 
     const { user } = useAuth();
 
@@ -49,9 +51,9 @@ function Navbar() {
                         Orders
                     </NavLink>
 
-                    <NavLink to="/profile">
+                    {/* <NavLink to="/profile">
                         Profile
-                    </NavLink>
+                    </NavLink> */}
 
                 </nav>
 
@@ -69,6 +71,9 @@ function Navbar() {
                     <NavLink
                         to="/profile"
                         className="profile-btn"
+                        onClick={() =>
+                            setShowProfile(!showProfile)
+                        }
                     >
 
                         <FiUser/>
@@ -80,6 +85,41 @@ function Navbar() {
                         </span>
 
                     </NavLink>
+
+                    <button
+                        
+                        className="icon-btn"
+                    >
+                        <FiLogOut size={22}/>
+                        
+                    </button>
+
+                    {/* To Display The Pop Dialog To Show Profile Option */}
+
+                    {/* {showProfile && (
+
+                        <div className="admin-profile-menu">
+
+                            <Link to="/admin/profile">
+                                <i className="fa-regular fa-user"></i>
+                                Profile
+                            </Link>
+
+                            <Link to="/admin/settings">
+                                <i className="fa-solid fa-gear"></i>
+                                Settings
+                            </Link>
+
+                            <div className="profile-menu-divider"></div>
+
+                            <button onClick={handleLogout}>
+                                <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                                Logout
+                            </button>
+
+                        </div>
+
+                    )} */}
 
                     <button
 

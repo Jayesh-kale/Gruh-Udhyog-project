@@ -11,7 +11,8 @@ function Sidebar() {
     const [show, setShow] = useState(localStorage.getItem('showSidebar'));
 
     const navigate = useNavigate();
-    const handleLogout = async () => {
+    const handleLogout = async (e) => {
+        e.preventDefault();
         await logoutUser();
         navigate("/login");
     };
@@ -97,9 +98,9 @@ return (
 
                 <hr className="bar" />
                 <div className="d-flex justify-content-center">
-                    <button className="btn btn-danger" onClick={() => 
+                    <button className="btn btn-danger" onClick={(e) => 
                     {
-                       handleLogout();
+                       handleLogout(e);
                     }}>
                         LogOut
                     </button>

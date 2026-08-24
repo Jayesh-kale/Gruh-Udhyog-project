@@ -62,7 +62,7 @@ function CartSummary({
 
                         deliveryCharge === 0
 
-                            ? "FREE"
+                            ? "Self Service"
 
                             : `₹${deliveryCharge}`
 
