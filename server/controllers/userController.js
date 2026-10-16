@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const order = require("../models/order");
 
 // ================= Register User =================
 exports.registerUser = async (req, res) => {
@@ -201,3 +202,22 @@ exports.getCurrentUser = async (req, res) => {
     }
 
 };
+// gives the orders specific to the user
+exports.getOrderStatistics = async(req , res) => {
+    try {
+         const records = await order.findById(req.user.id);
+         if (records) {
+             res.status(200).json({
+                 success: true,
+                 records
+             });
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+}

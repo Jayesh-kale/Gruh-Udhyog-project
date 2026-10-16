@@ -12,6 +12,7 @@ import Button from "../../../common/Button/Button";
 import ConfirmDialog from "../../../common/ConfirmDialog/ConfirmDialog";
 
 import QuantitySelector from "../../QuantitySelector/QuantitySelector";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function CartItem({
 
@@ -41,10 +42,7 @@ function CartItem({
 
                     <img
 
-                        src={
-                            item.image?.url ||
-                            "/images/product-placeholder.png"
-                        }
+                        src={getImageUrl(item.image)}
 
                         alt={item.name}
 

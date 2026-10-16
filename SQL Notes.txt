@@ -1,0 +1,8 @@
+Aggregate Function:
+1]count(): Count does not count the null values even if that are present in the 	   record.
+
+2]max() And min(): Count does not count the null values even if that are present 	in the record.
+
+That's Why * is used,that count all the record present even if the null values present.(Differance between count(id) and count(*))
+
+Delete from table_name; is equavalnet to truncate

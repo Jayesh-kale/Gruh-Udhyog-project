@@ -43,7 +43,15 @@ export const getSeasonalProducts = async () => {
 // To Add The Product That Admin Will Add To Display On Customer Side
 export const createProduct = async (payload) => {
     try {
-        const response = await api.post("/products/createProduct", payload);
+        const response = await api.post(
+            "/products/createProduct",
+            payload,
+            {
+                headers: {
+                    "Content-Type": undefined
+                }
+            }
+        );
         return response.data;
     } catch (error) {
         throw error;
@@ -52,7 +60,15 @@ export const createProduct = async (payload) => {
 
 export const updateProduct = async(id, payload) => {
     try {
-        const response = await api.patch(`/products/${id}`, payload);
+        const response = await api.patch(
+            `/products/${id}`,
+            payload,
+            {
+                headers: {
+                    "Content-Type": undefined
+                }
+            }
+        );
         return response.data;
     }
     catch (error) {

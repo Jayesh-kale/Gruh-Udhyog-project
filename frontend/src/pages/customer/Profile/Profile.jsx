@@ -19,6 +19,11 @@ const Profile = () => {
         village: user?.village || "",
     });
 
+    const getOrdersDetails = () => {
+        const data  = getAllOrdersStatistics();
+        
+    }
+
     const loadRecords = async () => {
         try {
            const response = await getMyOrders();

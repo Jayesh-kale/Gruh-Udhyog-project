@@ -255,10 +255,15 @@ exports.createProduct = async (req, res) => {
 
         if (req.file) {
 
-            image = await uploadToCloudinary(
-                req.file.path,
-                "products"
+            const uploadedImage = await uploadToCloudinary(
+                req.file.buffer,
+                "family-business/products"
             );
+
+            image = {
+                url: uploadedImage.secure_url,
+                public_id: uploadedImage.public_id
+            };
 
         }
        
@@ -311,7 +316,7 @@ exports.createProduct = async (req, res) => {
 
         if (image.public_id) {
 
-            await deleteFromCloudinary(
+            await cloudinary.uploader.destroy(
                 image.public_id
             );
 

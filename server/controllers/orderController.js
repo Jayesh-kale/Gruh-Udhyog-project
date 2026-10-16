@@ -429,7 +429,12 @@ exports.updateOrder = async (req, res) => {
             return sendError(res, 400, "Invalid order type.");
         }
 
-        if (!["Cash", "UPI"].includes(paymentMethod)) {
+        const validPaymentMethod =
+            orderType === "Online"
+                ? paymentMethod === "Razorpay"
+                : ["Cash", "UPI"].includes(paymentMethod);
+
+        if (!validPaymentMethod) {
             return sendError(res, 400, "Invalid payment method.");
         }
 
@@ -470,6 +475,9 @@ exports.updateOrder = async (req, res) => {
         order.remainingAmount = remainingAmount;
 
         order.paymentStatus = paymentStatus;
+
+        order.paymentGateway =
+            orderType === "Online" ? "Razorpay" : null;
 
         order.rawMaterials = rawMaterials;
 

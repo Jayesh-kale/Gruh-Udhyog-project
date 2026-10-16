@@ -1,4 +1,5 @@
 import { Badge, Button, Card } from "../../common";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 
 
@@ -13,7 +14,7 @@ function SeasonalProductCard({ product,icon }) {
             </Badge>
 
             <img
-                src={product.image}
+                src={getImageUrl(product.image)}
                 alt={product.name}
                 className="img-fluid rounded mb-3"
             />
@@ -34,11 +35,11 @@ function SeasonalProductCard({ product,icon }) {
 
                 </span>
 
-                <Button>
+                {/* <Button>
 
                     Order Now{<small>{""}{icon}</small>}
 
-                </Button>
+                </Button> */}
 
             </div>
 

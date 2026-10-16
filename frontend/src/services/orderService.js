@@ -6,6 +6,15 @@ export const createOrder = async (orderData) => {
     return response.data;
 };
 
+export async function verifyRazorpayPayment(paymentData) {
+    const response = await api.post(
+        "/payments/razorpay/verify",
+        paymentData
+    );
+
+    return response.data;
+}
+
 export const getMyOrders = async () => {
     const response = await api.get("/orders/my-orders");
     return response.data;

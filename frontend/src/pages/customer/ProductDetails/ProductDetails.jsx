@@ -17,6 +17,7 @@ import Card from "../../../components/common/Card";
 import RelatedProducts from "../../../components/customer/RelatedProducts/RelatedProducts";
 
 import QuantitySelector from "../../../components/customer/QuantitySelector/QuantitySelector";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 function ProductDetails() {
 
@@ -137,10 +138,7 @@ function ProductDetails() {
 
                             <img
 
-                                src={
-                                    product.image?.url ||
-                                    "/images/product-placeholder.png"
-                                }
+                                src={getImageUrl(product.image)}
 
                                 alt={product.name}
 

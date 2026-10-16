@@ -10,8 +10,10 @@ import {
 
 import { useState } from "react";
 import { useAuth } from "../../../services/context/authContext.jsx";
+import { logoutUser} from "../../../services/authService.js";
 
 import "./Navbar.css";
+import toast from "react-hot-toast";
 
 function Navbar() {
 
@@ -19,6 +21,16 @@ function Navbar() {
     const [showProfile, setShowProfile] = useState(false);
 
     const { user } = useAuth();
+
+    const handleLogOut = () => {
+        const logOut = logoutUser();
+        if(logOut){
+            toast.success("Logged out successfully!");
+            setTimeout(() => {
+            window.location.href = "/login";
+        }, 1000);
+        }
+    }
 
     return (
 
@@ -89,6 +101,7 @@ function Navbar() {
                     <button
                         
                         className="icon-btn"
+                        onClick={() => handleLogOut()}
                     >
                         <FiLogOut size={22}/>
                         

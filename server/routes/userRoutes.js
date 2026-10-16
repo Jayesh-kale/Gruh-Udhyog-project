@@ -16,4 +16,5 @@ router.get("/profile", verifyToken, getUserProfile);
 
 router.get("/me", verifyToken , getCurrentUser);
 
+
 module.exports = router;

@@ -5,7 +5,6 @@ const router = express.Router();
 const { verifyToken, isAdmin } = require("../middleware/authMiddleware");
 
 const {
-    createOrder,
     updateOrder,
     updatePayment,
     changeOrderStatus,
@@ -14,6 +13,7 @@ const {
     deleteOrder,
     getMyOrders
 } = require("../controllers/orderController");
+const { createOrder: createPaymentOrder } = require("../controllers/paymentController");
 
 //CUSTOMER ROUTES
 router.get(
@@ -29,7 +29,7 @@ router.get(
 router.post(
     "/create",
     verifyToken,
-    createOrder
+    createPaymentOrder
 );
 
 // Get All Orders

@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const connectDB = require("./config/database");
 const express = require("express");
@@ -12,6 +13,7 @@ const creditBookRoutes = require("./routes/creditBookRoutes");
 const productionQueueRoutes = require("./routes/productionQueueRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 const app = express();
 app.use(cookieParser());
@@ -24,6 +26,10 @@ app.use(cors(
     credentials: true
 }
 ));
+
+// Webhook route must be registered before express.json().
+app.use("/api/payments", paymentRoutes);
+
 app.use(express.json());
 
 

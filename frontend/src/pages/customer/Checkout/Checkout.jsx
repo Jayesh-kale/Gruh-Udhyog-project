@@ -1,6 +1,12 @@
 import "./Checkout.css";
 import toast from "react-hot-toast";
-import { createOrder } from "../../../services/orderService";
+import {
+    createOrder,
+    verifyRazorpayPayment
+} from "../../../services/orderService";
+
+
+import { loadRazorpayScript } from "../../../utils/loadRazorpay";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +21,7 @@ import Input from "../../../components/common/Input";
 import Button from "../../../components/common/Button";
 import Modal from "../../../components/common/Modal";
 import Badge from "../../../components/common/Badge";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 
 
@@ -38,8 +45,7 @@ function Checkout() {
         fullName: "",
         phone: "",
         village: "",
-        paymentMethod: "Cash",
-        upiTransactionId: ""
+        paymentMethod: "Razorpay"
 
     });
 
@@ -88,115 +94,220 @@ function Checkout() {
         }));
 
     }
-
-    // Function to handle order placement
+    // Function to handle placing the order and initiating Razorpay payment
     async function handlePlaceOrder() {
-
         if (!formData.fullName.trim()) {
-
             toast.error("Full name is required.");
-
             return;
-
         }
 
         if (!formData.phone.trim()) {
-
             toast.error("Phone number is required.");
-
             return;
+        }
 
+        if (!/^[6-9]\d{9}$/.test(formData.phone.trim())) {
+            toast.error("Enter a valid 10-digit phone number.");
+            return;
         }
 
         if (!formData.village.trim()) {
-
             toast.error("Village is required.");
-
             return;
-
         }
 
-        if (
-
-            formData.paymentMethod === "UPI" &&
-
-            !formData.upiTransactionId.trim()
-
-        ) {
-
-            toast.error("Enter UPI Transaction ID.");
-
+        if (!Array.isArray(cartItems) || cartItems.length === 0) {
+            toast.error("Your cart is empty.");
             return;
-
         }
 
         try {
-
             setLoading(true);
 
+            const razorpayLoaded =
+                await loadRazorpayScript();
+
+            if (!razorpayLoaded) {
+                throw new Error(
+                    "Razorpay Checkout could not be loaded."
+                );
+            }
+
             const payload = {
-
                 customer: {
-
-                    customerId: user._id,
-
-                    name: user.name,
-
-                    phone: user.phone,
-
-                    village: formData.village
-
+                    customerId: user?._id || null,
+                    name: formData.fullName.trim(),
+                    phone: formData.phone.trim(),
+                    village: formData.village.trim()
                 },
 
-                items: (Array.isArray(cartItems) ? cartItems : [cartItems]).map(item => ({
+                items: cartItems.map((item) => ({
                     productId: item._id,
-                    quantity: item.quantity
+                    quantity: Number(item.quantity)
                 })),
 
                 orderType: "Online",
 
-                paymentMethod: formData.paymentMethod,
+                // Razorpay is the gateway.
+                // UPI will be available inside Razorpay Checkout.
+                paymentMethod: "Razorpay",
 
-                paidAmount: formData.paymentMethod === "UPI"
-                    ? cartTotal
-                    : 0,
+                // Do not send paidAmount for online payment.
+                // The backend must set it to 0 until confirmation.
             };
 
             const response = await createOrder(payload);
-            console.log("Checkout Payload", response);
 
-            console.log("in checkout response: ", response.data.orderNumber);
+            console.log("Create order response:", response);
 
-            setOrderNumber(
+            const data = response.data || response;
 
-                response.data.orderNumber
+            if (!data.razorpay) {
+                throw new Error(
+                    "Razorpay order information was not returned."
+                );
+            }
 
+            const razorpayOptions = {
+                key: data.razorpay.keyId,
+
+                amount: data.razorpay.amount,
+                currency: data.razorpay.currency,
+                order_id: data.razorpay.orderId,
+
+                name: "Jay Gyruh Udyog Pathardi",
+                description:
+                    data.razorpay.description ||
+                    `Order ${data.order?.orderNumber || ""}`,
+
+                prefill: {
+                    name: formData.fullName.trim() || user?.name,
+                    contact: formData.phone.trim() || user?.phone,
+                    email: user?.email
+                },
+
+                notes: {
+                    village: formData.village.trim(),
+                },
+
+                theme: {
+                    color: "#F5F5F5 "
+                },
+
+                handler: async function (paymentResponse) {
+                    try {
+                        setLoading(true);
+
+                        toast.loading(
+                            "Payment received. Verifying...",
+                            {
+                                id: "payment-verification"
+                            }
+                        );
+
+                        const verificationResponse =
+                            await verifyRazorpayPayment({
+                                razorpay_payment_id:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpay_order_id:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpay_signature:
+                                    paymentResponse.razorpay_signature
+                            });
+
+                        toast.dismiss("payment-verification");
+
+                        if (
+                            !verificationResponse.success
+                        ) {
+                            throw new Error(
+                                verificationResponse.message ||
+                                "Payment verification failed."
+                            );
+                        }
+
+                        const createdOrder =
+                            verificationResponse.data?.order;
+
+                        if (!createdOrder?.orderNumber) {
+                            throw new Error(
+                                "Payment was verified, but the order confirmation was not returned."
+                            );
+                        }
+
+                        setOrderNumber(
+                            createdOrder.orderNumber
+                        );
+
+                        clearCart();
+                        setShowSuccess(true);
+
+                        toast.success(
+                            "Payment verified successfully."
+                        );
+                    } catch (error) {
+                        toast.dismiss("payment-verification");
+
+                        console.error(
+                            "Payment verification error:",
+                            error
+                        );
+
+                        toast.error(
+                            error.response?.data?.message ||
+                            error.message ||
+                            "Payment verification failed."
+                        );
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        setLoading(false);
+
+                        toast.error(
+                            "Payment window closed. Your order is still unpaid."
+                        );
+                    }
+                }
+            };
+
+            const checkout =
+                new window.Razorpay(razorpayOptions);
+
+            checkout.on(
+                "payment.failed",
+                function (failedResponse) {
+                    console.error(
+                        "Razorpay payment failed:",
+                        failedResponse
+                    );
+
+                    toast.error(
+                        failedResponse.error?.description ||
+                        "Payment failed. Please try again."
+                    );
+
+                    setLoading(false);
+                }
             );
 
-            clearCart();
-
-            setShowSuccess(true);
-
-        }
-
-        catch (error) {
+            checkout.open();
+        } catch (error) {
+            console.error("Create payment order error:", error);
 
             toast.error(
-
                 error.response?.data?.message ||
-
-                "Failed to place order."
-
+                error.message ||
+                "Failed to start payment."
             );
 
-        }
-
-        finally {
-
             setLoading(false);
-
         }
-
     }
 
     return (
@@ -278,82 +389,30 @@ function Checkout() {
                         />
 
                         <div className="payment-section">
-
                             <label className="payment-title">
-
                                 Payment Method
-
                             </label>
 
                             <div className="payment-options">
-
                                 <label className="payment-option">
-
                                     <input
-
                                         type="radio"
-
                                         name="paymentMethod"
-
-                                        value="Cash"
-
-                                        checked={formData.paymentMethod === "Cash"}
-
+                                        value="Razorpay"
+                                        checked={
+                                            formData.paymentMethod === "Razorpay"
+                                        }
                                         onChange={handleChange}
-
                                     />
 
-                                    Cash
-
+                                    UPI / Cards / Net Banking
                                 </label>
-
-                                <label className="payment-option">
-
-                                    <input
-
-                                        type="radio"
-
-                                        name="paymentMethod"
-
-                                        value="UPI"
-
-                                        checked={formData.paymentMethod === "UPI"}
-
-                                        onChange={handleChange}
-
-                                    />
-
-                                    UPI
-
-                                </label>
-
                             </div>
 
+                            <small className="payment-help-text">
+                                You will complete payment securely through Razorpay.
+                            </small>
                         </div>
-
-                        {
-
-                            formData.paymentMethod === "UPI" && (
-
-                                <Input
-
-                                    label="UPI Transaction ID"
-
-                                    name="upiTransactionId"
-
-                                    value={formData.upiTransactionId}
-
-                                    onChange={handleChange}
-
-                                    placeholder="Enter transaction ID"
-
-                                    required
-
-                                />
-
-                            )
-
-                        }
 
                     </div>
 
@@ -390,10 +449,7 @@ function Checkout() {
 
                                     <img
 
-                                        src={
-                                            item.image?.url ||
-                                            "/images/product-placeholder.png"
-                                        }
+                                        src={getImageUrl(item.image)}
 
                                         alt={item.name}
 
@@ -586,9 +642,7 @@ function Checkout() {
                             </span>
 
                             <Badge variant="primary">
-
-                                {formData.paymentMethod}
-
+                                Razorpay
                             </Badge>
 
                         </div>
@@ -601,10 +655,8 @@ function Checkout() {
 
                             </span>
 
-                            <Badge variant="warning">
-
-                                Pending
-
+                            <Badge variant="success">
+                                Payment Verified
                             </Badge>
 
                         </div>

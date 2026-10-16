@@ -15,6 +15,7 @@ import EmptyState from "../../../components/common/EmptyState";
 import { getMyOrders } from "../../../services/orderService";
 import { Modal } from "../../../components/common";
 import PaymentForm from "../../../components/admin/PaymentForm/PaymentForm"
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 function Orders() {
 
@@ -237,7 +238,6 @@ function Orders() {
                 open={showModal}
                 title={selectedOrder?.orderNumber || "Order Details"}
                 onClose={() => setShowModal(false)}>
-
                 {
 
                     selectedOrder && (
@@ -323,7 +323,7 @@ function Orders() {
 
                                         <img
 
-                                            src={item.image.url}
+                                            src={getImageUrl(item.image)}
 
                                             alt={item.productName}
 

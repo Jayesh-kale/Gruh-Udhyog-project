@@ -23,6 +23,10 @@ api.interceptors.request.use(
         //     `${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
         // );
 
+        if (config.data instanceof FormData) {
+            delete config.headers["Content-Type"];
+        }
+
         return config;
 
     },
