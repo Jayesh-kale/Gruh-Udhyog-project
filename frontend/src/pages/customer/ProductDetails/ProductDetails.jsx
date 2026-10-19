@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import AOS from "aos";
 import { useCart } from "../../../services/context/CartContext";
+import { useAuth } from "../../../services/context/authContext.jsx";
 
 import { toast } from "react-hot-toast";
 import { FaArrowLeft } from "react-icons/fa";
@@ -18,11 +19,13 @@ import RelatedProducts from "../../../components/customer/RelatedProducts/Relate
 
 import QuantitySelector from "../../../components/customer/QuantitySelector/QuantitySelector";
 import ProductImage from "../../../components/customer/ProductImage/ProductImage";
+import LoginPromptDialog from "../../../components/common/LoginPromptDialog";
 
 function ProductDetails() {
 
     const navigate = useNavigate();
-    const { addToCart, buyNow,clearCart } = useCart();
+    const { addToCart, clearCart } = useCart();
+    const { user } = useAuth();
 
     const { id } = useParams();
 
@@ -31,15 +34,7 @@ function ProductDetails() {
     const [loading, setLoading] = useState(true);
 
     const [quantity, setQuantity] = useState(1);
-
-    useEffect(() => {
-
-        AOS.refresh();
-
-        fetchProduct();
-
-       
-    }, [id]);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
     async function fetchProduct() {
         
@@ -68,8 +63,20 @@ function ProductDetails() {
 
     }
 
+    useEffect(() => {
+
+        AOS.refresh();
+
+        fetchProduct();
+
+    }, [id]);
+
     //function to add the product to card
     const handleAddToCart = () => {
+        if (!user) {
+            setShowLoginPrompt(true);
+            return;
+        }
 
         addToCart(product, quantity);
 
@@ -78,6 +85,10 @@ function ProductDetails() {
     };
 
     const handleBuyNow = () => {
+        if (!user) {
+            setShowLoginPrompt(true);
+            return;
+        }
 
         clearCart();
 
@@ -85,6 +96,11 @@ function ProductDetails() {
 
         navigate("/cart");
 
+    };
+
+    const handleLoginConfirm = () => {
+        setShowLoginPrompt(false);
+        navigate("/login");
     };
 
     if (loading) {
@@ -277,6 +293,12 @@ function ProductDetails() {
 
                 category={product.category}
 
+            />
+
+            <LoginPromptDialog
+                open={showLoginPrompt}
+                onConfirm={handleLoginConfirm}
+                onCancel={() => setShowLoginPrompt(false)}
             />
 
         </section>

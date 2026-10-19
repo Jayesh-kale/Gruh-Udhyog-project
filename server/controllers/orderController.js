@@ -38,7 +38,7 @@ exports.createOrder = async (req, res) => {
             notes = req.body.orderType === "Online" ? "Online Order" : ""
 
         } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
 
         // Normalize items: accept either `productId` or `productID` from clients
         let items = Array.isArray(req.body.items) ? req.body.items : [];
@@ -211,7 +211,7 @@ exports.getAllOrders = async (req, res) => {
             sort = "-createdAt"
         } = req.query;
 
-        console.log("Query Parameters in getAllOrders:", req.query); // Log the query parameters to see what is being passed
+        // console.log("Query Parameters in getAllOrders:", req.query); // Log the query parameters to see what is being passed
 
         const pageNumber = Math.max(1, Number(page) || 1);
 

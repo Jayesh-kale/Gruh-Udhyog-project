@@ -42,7 +42,6 @@ function Orders() {
 
             const response = await getMyOrders();
 
-            console.log("Orders Response:", response.data.orders);
             setOrders(response.data.orders);
 
         }

@@ -9,8 +9,9 @@ import {
 } from "react-icons/fi";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../services/context/authContext.jsx";
-import { logoutUser} from "../../../services/authService.js";
+import LoginPromptDialog from "../LoginPromptDialog";
 
 import "./Navbar.css";
 import toast from "react-hot-toast";
@@ -19,18 +20,38 @@ function Navbar() {
 
     const [mobileMenu, setMobileMenu] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
-    const handleLogOut = () => {
-        const logOut = logoutUser();
-        if(logOut){
+    const handleLogOut = async () => {
+        try {
+            await logout();
             toast.success("Logged out successfully!");
-            setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000);
+        } catch {
+            toast.error("Unable to log out. Please try again.");
         }
-    }
+    };
+
+    const handleCartClick = (event) => {
+        if (!user) {
+            event.preventDefault();
+            setShowLoginPrompt(true);
+        }
+    };
+
+    const handleProfileClick = (event) => {
+        if (!user) {
+            event.preventDefault();
+            setShowLoginPrompt(true);
+        }
+    };
+
+    const handleLoginConfirm = () => {
+        setShowLoginPrompt(false);
+        navigate("/login");
+    };
 
     return (
 
@@ -60,9 +81,11 @@ function Navbar() {
                         Products
                     </NavLink>
 
-                    <NavLink to="/orders">
-                        Orders
-                    </NavLink>
+                    {user && (
+                        <NavLink to="/orders">
+                            Orders
+                        </NavLink>
+                    )}
 
                     {/* <NavLink to="/profile">
                         Profile
@@ -74,39 +97,35 @@ function Navbar() {
 
                 <div className="navbar-right">
 
-                    <NavLink
-                        to="/cart"
-                        className="icon-btn"
-                    >
+                    <NavLink to="/cart" className="icon-btn" onClick={handleCartClick}>
                         <FiShoppingCart size={22}/>
                     </NavLink>
 
-                    <NavLink
-                        to="/profile"
-                        className="profile-btn"
-                        onClick={() =>
-                            setShowProfile(!showProfile)
-                        }
-                    >
+                    {user ? (
+                        <>
+                            <NavLink
+                                to="/profile"
+                                className="profile-btn"
+                                onClick={() => setShowProfile(!showProfile)}
+                            >
+                                <FiUser/>
+                                <span>{user.name || "Profile"}</span>
+                            </NavLink>
 
-                        <FiUser/>
-
-                        <span>
-
-                            {user?.name || "Profile"}
-
-                        </span>
-
-                    </NavLink>
-
-                    <button
-                        
-                        className="icon-btn"
-                        onClick={() => handleLogOut()}
-                    >
-                        <FiLogOut size={22}/>
-                        
-                    </button>
+                            <button className="icon-btn" onClick={handleLogOut}>
+                                <FiLogOut size={22}/>
+                            </button>
+                        </>
+                    ) : (
+                        <NavLink
+                            to="/profile"
+                            className="profile-btn"
+                            onClick={handleProfileClick}
+                        >
+                            <FiUser/>
+                            <span>Profile</span>
+                        </NavLink>
+                    )}
 
                     {/* To Display The Pop Dialog To Show Profile Option */}
 
@@ -162,6 +181,12 @@ function Navbar() {
                 </div>
 
             </div>
+
+            <LoginPromptDialog
+                open={showLoginPrompt}
+                onConfirm={handleLoginConfirm}
+                onCancel={() => setShowLoginPrompt(false)}
+            />
 
         </header>
 

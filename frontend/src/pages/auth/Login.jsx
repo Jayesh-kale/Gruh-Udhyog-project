@@ -18,7 +18,7 @@ function Login() {
 
         try {
             let response = await login(data);
-            console.log("Login Response:", response);
+            // console.log("Login Response:", response);
             toast.success("Login Successful");
         }
 

@@ -19,6 +19,9 @@ import "./assets/styles/global.css";
 import "./assets/styles/utilities.css";
 import "./assets/styles/components.css";
 
+import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
 // AOS
 import "aos/dist/aos.css";
 

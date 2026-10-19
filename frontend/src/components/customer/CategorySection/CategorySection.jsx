@@ -43,7 +43,7 @@ function CategorySection() {
         const fetchCategory = async () => {
             try {
                 const apiCategories = await categoryService();
-                console.log("Fetched categories:", apiCategories);
+              
 
                 const formatted = (apiCategories || []).map((c, i) => {
                     const categoryName = c || "Unknown";

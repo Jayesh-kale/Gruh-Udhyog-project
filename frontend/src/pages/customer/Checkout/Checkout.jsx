@@ -158,7 +158,7 @@ function Checkout() {
 
             const response = await createOrder(payload);
 
-            console.log("Create order response:", response);
+            // console.log("Create order response:", response);
 
             const data = response.data || response;
 

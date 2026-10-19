@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { logoutUser } from "../../../services/authService";
-import { FaBell, FaBellSlash, FaBuysellads } from "react-icons/fa";
+
 
 const NavBar = () => {
 
@@ -36,7 +36,7 @@ const NavBar = () => {
                 <Link to="/admin/dashboard" className="admin-logo">
 
                     <span className="admin-logo-icon">
-                        <i className="fa-solid fa-house"></i>
+                        <img src="https://res.cloudinary.com/drky4ztad/image/upload/v1792432703/JAY_Gruh_Udhyog_Heritage_Logo.png" style={{"backgroundColor": "lightgray", "borderRadius": "7px"}} alt="Logo"/>
                     </span>
 
                     <div>
@@ -59,14 +59,19 @@ const NavBar = () => {
                 {/* Notification */}
                 <button className="admin-action-btn">
 
-                    <i className="fa-regular fa-bell">🔔</i>
+                    <i>🔔</i>
 
                     <span className="notification-dot"></span>
 
                 </button>
 
-                <button className="admin-action-btn" onClick={handleSidebarToggle}>
-                    <button className="admin-action-btn">{localStorage.getItem('showSidebar') == 'true' ? "Hide SideBar" : "ShowSideBar" }</button>
+                  <button className="admin-action-btn" onClick={handleSidebarToggle}>
+                    {localStorage.getItem('showSidebar') === 'true' ? (
+                        <i className="fa-solid fa-eye-slash"></i>
+                    ) : (
+                        <i className="fa-solid fa-eye"></i>
+                    
+                    )}
                 </button>
 
                 {/* Profile */}

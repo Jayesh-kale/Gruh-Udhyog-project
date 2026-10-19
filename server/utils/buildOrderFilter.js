@@ -11,7 +11,7 @@ const buildOrderFilter = (query) => {
         toDate
     } = query;
 
-    console.log("Query in buildOrderFilter:", query); // Log the query to see what is being passed
+    // console.log("Query in buildOrderFilter:", query); // Log the query to see what is being passed
 
     const filter = {
         orderStatus: { $ne: "Delivered" }  //Extracted only Order Which is Not Delivered

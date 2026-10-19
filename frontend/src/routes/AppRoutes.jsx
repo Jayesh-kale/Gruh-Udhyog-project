@@ -77,55 +77,25 @@ function AppRoutes() {
 
             {/* ================= Customer Routes ================= */}
 
-            <Route
-                path="/"
-                element={
-                    <ProtectedRoute
-                        allowedRoles={["customer"]}
-                    />
-                }
-            >
-                <Route element={<CustomerLayout />}>
+            <Route element={<CustomerLayout />}>
+                {/* Customers can browse before signing in. */}
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/contact" element={<ContactUs />} />
 
-                    <Route
-                        index
-                        element={<Home />}
-                    />
-
-                    <Route
-                        path="products"
-                        element={<Products />}
-                    />
-
-                    <Route
-                        path="products/:id"
-                        element={<ProductDetails />}
-                    />
-
-                    <Route
-                        path="cart"
-                        element={<Cart />}
-                    />
-
-                    <Route
-                        path="checkout"
-                        element={<Checkout />}
-                    />
-
-                    <Route
-                        path="orders"
-                        element={<CustomerOrders />}
-                    />
-
-                    <Route
-                        path="profile"
-                        element={<Profile />}
-                    />
-
-                    <Route
-                        path="contact"
-                        element={<ContactUs />}
-                    />
+                {/* Purchasing and customer account features require a customer account. */}
+                <Route
+                    element={
+                        <ProtectedRoute
+                            allowedRoles={["customer"]}
+                        />
+                    }
+                >
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/orders" element={<CustomerOrders />} />
+                    <Route path="/profile" element={<Profile />} />
                 </Route>
             </Route>
 

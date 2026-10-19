@@ -15,9 +15,6 @@ function SeasonalProducts() {
 
     async function loadSeasonalProducts() {
         const products = await getSeasonalProducts();
-
-        console.log("Fetched Seasonal Products:", products);
-
         // Check if products exists AND is an array
         if (!products || !Array.isArray(products)) {
             setLoading(false);
@@ -28,7 +25,6 @@ function SeasonalProducts() {
         setLoading(false);
     }
 
-    console.log("Seasonal Products:", seasonalProducts);
     return (
 
         <section className="py-5">

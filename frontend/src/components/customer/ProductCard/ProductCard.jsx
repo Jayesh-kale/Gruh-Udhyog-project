@@ -1,19 +1,42 @@
 import { Link } from "react-router-dom";
 import { FiShoppingCart, FiEye, FiStar } from "react-icons/fi";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../../../services/context/authContext.jsx";
 import { useCart } from "../../../services/context/CartContext";
+import LoginPromptDialog from "../../common/LoginPromptDialog";
 import ProductImage from "../ProductImage/ProductImage";
 import "./ProductCard.css";
 
 function ProductCard({ product }) {
     const { addToCart } = useCart();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+    const handleAddToCart = () => {
+        if (!user) {
+            setShowLoginPrompt(true);
+            return;
+        }
+
+        addToCart(product, 1);
+        toast.success(`${product.name} added to cart!`);
+    };
+
+    const handleLoginConfirm = () => {
+        setShowLoginPrompt(false);
+        navigate("/login");
+    };
 
     return (
-        <div className="product-card">
+        <div className="product-card card">
             <div className="product-image">
                 <ProductImage
                     image={product.image}
                     alt={product.name}
+                    className="img-fluid rounded mb-3 h-100"
                 />
                 <span className="product-category">{product.category}</span>
             </div>
@@ -35,10 +58,16 @@ function ProductCard({ product }) {
                         <FiEye /> View
                     </Link>
 
-                    <button className="cart-btn" onClick={() => { addToCart(product,1); toast.success(`${product.name} added to cart!`); }}>
+                    <button className="cart-btn" onClick={handleAddToCart}>
                         <FiShoppingCart /> Add
                     </button>
                 </div>
+
+                <LoginPromptDialog
+                    open={showLoginPrompt}
+                    onConfirm={handleLoginConfirm}
+                    onCancel={() => setShowLoginPrompt(false)}
+                />
             </div>
         </div>
     );
