@@ -9,6 +9,7 @@ const {
     createProduct,
     updateProduct,
     getAllProducts,
+    getRelatedProducts,
     getProductById,
     deleteProduct,
     searchProducts,
@@ -24,6 +25,9 @@ const upload = require("../middleware/upload");
 
 // Get all products
 router.get("/", getAllProducts);
+
+//get related products
+router.get("/related-Products", getRelatedProducts);
 
 // Search products
 router.get("/search", searchProducts);

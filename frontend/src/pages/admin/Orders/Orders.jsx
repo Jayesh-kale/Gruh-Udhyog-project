@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge, Button, Card, Modal, PageHeader, Pagination, SearchBar, Select } from '../../../components/common';
 import OrderTracker from '../../../components/customer/OrderTracker/OrderTracker';
 
-import { getAllOrders, updateOrderStatus, updatePaymentAmount } from '../../../services/orderService';
+import { getAllOrders, updateOrderStatus } from '../../../services/orderService';
 import toast from 'react-hot-toast';
 import PaymentForm from '../../../components/admin/PaymentForm/PaymentForm';
 
@@ -59,6 +59,7 @@ function Orders() {
 
     useEffect(() => {
         loadOrders();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter, orderOperations.acceptOrder, orderOperations.rejectOrder, orderOperations.paymentUpdate, page]);
 
     async function loadOrders() {
@@ -113,7 +114,6 @@ function Orders() {
 
         if (!orderOperations.acceptOrder) return;
         try {
-
             setOrderOperations(prev => ({ ...prev, accepting: true }));
 
             const res = await updateOrderStatus(
@@ -122,6 +122,8 @@ function Orders() {
             );
 
             const updatedOrder = res?.data?.order || res?.order;
+
+            console.log("Accepted order In Orders.jsx: ", updatedOrder);
 
             toast.success(
                 "Order accepted successfully!"
@@ -150,18 +152,14 @@ function Orders() {
             }
 
             setOrderOperations(prev => ({ ...prev, acceptOrder: null }));
-
         } catch (error) {
 
             toast.error(
                 error?.response?.data?.message ||
                 "Failed to accept order."
             );
-
         } finally {
-
             setOrderOperations(prev => ({ ...prev, accepting: false }));
-
         }
 
     };
@@ -268,6 +266,7 @@ function Orders() {
                 setDialogs={setDialogs}
                 selectedOrder={selectedOrder}
                 setSelectedOrder={(e) => setSelectedOrder(e)}
+                onPaymentUpdated={loadOrders}
             />
 
             <PageHeader title="Orders Management" subtitle="Manage online and offline orders" />

@@ -13,6 +13,10 @@ const generateOrderNumber = require("../utils/generateOrderNumber");
 const syncCreditBook = require("../utils/syncCreditBook");
 const { syncProductionQueue } = require("../utils/syncProductionQueue");
 const { sendSuccess, sendError } = require("../utils/sendResponse");
+const {
+  isWhatsAppConfigured,
+  sendPaymentReceipt,
+} = require("../utils/whatsappService");
 
 
 function getRazorpay() {
@@ -204,6 +208,14 @@ exports.createOrder = async (req, res) => {
     const { remainingAmount, paymentStatus } =
       calculatePayment(totalAmount, paidAmount);
 
+    if (
+      !Number.isFinite(paidAmount) ||
+      paidAmount < 0 ||
+      paidAmount > totalAmount
+    ) {
+      throw new Error("Paid amount must be between zero and the total amount.");
+    }
+
     const orderNumber = await generateOrderNumber();
 
     const orders = await Order.create(
@@ -216,7 +228,7 @@ exports.createOrder = async (req, res) => {
           paymentMethod,
           totalAmount,
 
-          paidAmount: 0,
+          paidAmount,
 
           remainingAmount:
             orderType === "Online"
@@ -240,7 +252,17 @@ exports.createOrder = async (req, res) => {
           rawMaterials,
           notes,
 
-          paymentHistory: [],
+          paymentHistory:
+            paidAmount > 0
+              ? [
+                  {
+                    amount: paidAmount,
+                    paymentMethod,
+                    status: "Success",
+                    paidAt: new Date(),
+                  },
+                ]
+              : [],
 
           editHistory: [
             {
@@ -258,15 +280,6 @@ exports.createOrder = async (req, res) => {
     );
 
     const createdOrder = orders[0];
-
-    await syncCreditBook(createdOrder, session);
-
-    await syncProductionQueue(
-      createdOrder,
-      null,
-      "Pending",
-      session
-    );
 
     await session.commitTransaction();
 
@@ -409,6 +422,9 @@ exports.verifyPayment = async (req, res) => {
             razorpayPaymentId: paymentId,
             razorpaySignature: signature,
             paymentCapturedAt: new Date(),
+            whatsappReceiptStatus: isWhatsAppConfigured()
+              ? "Pending"
+              : "Disabled",
             paymentHistory: [
               {
                 amount: totalAmount,
@@ -434,8 +450,6 @@ exports.verifyPayment = async (req, res) => {
       );
 
       createdOrder = orders[0];
-      await syncCreditBook(createdOrder, session);
-      await syncProductionQueue(createdOrder, null, "Pending", session);
       await PendingPayment.updateOne(
         { _id: pendingPayment._id, status: "Pending" },
         { $set: { status: "Completed" } },
@@ -452,10 +466,42 @@ exports.verifyPayment = async (req, res) => {
       await session.endSession();
     }
 
+    let receiptMessage =
+      "Payment verified and order placed successfully.";
+
+    if (isWhatsAppConfigured()) {
+      try {
+        await sendPaymentReceipt(createdOrder);
+        await Order.updateOne(
+          { _id: createdOrder._id },
+          {
+            $set: {
+              whatsappReceiptStatus: "Sent",
+              whatsappReceiptSentAt: new Date(),
+              whatsappReceiptError: null,
+            },
+          }
+        );
+      } catch (receiptError) {
+        console.error("WhatsApp receipt error:", receiptError);
+        await Order.updateOne(
+          { _id: createdOrder._id },
+          {
+            $set: {
+              whatsappReceiptStatus: "Failed",
+              whatsappReceiptError: receiptError.message,
+            },
+          }
+        );
+        receiptMessage +=
+          " Payment succeeded, but the WhatsApp receipt could not be sent.";
+      }
+    }
+
     return sendSuccess(
       res,
       200,
-      "Payment verified and order placed successfully.",
+      receiptMessage,
       {
         order: createdOrder,
         orderId: createdOrder._id,
@@ -659,17 +705,9 @@ exports.handleRazorpayWebhook = async (req, res) => {
           );
 
         if (updatedOrder) {
-          await syncCreditBook(
-            updatedOrder,
-            session
-          );
-
-          await syncProductionQueue(
-            updatedOrder,
-            null,
-            "Pending",
-            session
-          );
+          if (updatedOrder.orderStatus !== "Pending") {
+            await syncCreditBook(updatedOrder, session);
+          }
         }
 
         await session.commitTransaction();

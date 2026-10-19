@@ -1,22 +1,17 @@
 .product-card{
-
-    background:#fff;
-
-    border-radius:20px;
-
+    position:relative;
+    background:linear-gradient(180deg,#ffffff 0%,#fbfdf9 100%);
+    border:1px solid rgba(46,125,50,.09);
+    border-radius:24px;
     overflow:hidden;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
-    transition:.3s;
-
+    box-shadow:0 14px 35px rgba(35,73,42,.09);
+    transition:transform .3s ease,box-shadow .3s ease;
 }
 
 .product-card:hover{
 
     transform:translateY(-8px);
-
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    box-shadow:0 22px 50px rgba(35,73,42,.16);
 
 }
 
@@ -26,7 +21,8 @@
 
     overflow:hidden;
 
-    height:240px;
+    height:260px;
+    background:#edf5ed;
 
 }
 
@@ -38,7 +34,7 @@
 
     object-fit:cover;
 
-    transition:.4s;
+    transition:transform .5s ease;
 
 }
 
@@ -56,7 +52,7 @@
 
     left:15px;
 
-    background:#2E7D32;
+    background:rgba(27,94,32,.92);
 
     color:#fff;
 
@@ -69,14 +65,13 @@
 }
 
 .product-content{
-
-    padding:20px;
+    padding:24px;
 
 }
 
 .product-content h3{
-
-    font-size:22px;
+    color:#183b20;
+    font-size:21px;
 
     margin-bottom:10px;
 
@@ -109,14 +104,13 @@
 }
 
 .price{
-
-    margin:20px 0;
+    margin:20px 0 22px;
 
     font-size:24px;
 
     font-weight:700;
 
-    color:#2E7D32;
+    color:#247a3a;
 
 }
 
@@ -146,13 +140,13 @@
 
     padding:12px;
 
-    border:1px solid #2E7D32;
+    border:1px solid #247a3a;
 
     border-radius:12px;
 
     text-decoration:none;
 
-    color:#2E7D32;
+    color:#247a3a;
 
     font-weight:600;
 
@@ -164,7 +158,7 @@
 
     border:none;
 
-    background:#2E7D32;
+    background:linear-gradient(135deg,#2e7d32,#1b5e20);
 
     color:#fff;
 

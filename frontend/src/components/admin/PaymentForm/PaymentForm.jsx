@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { updatePaymentAmount } from '../../../services/orderService';
 import { Button, Modal } from '../../common';
 import toast from 'react-hot-toast';
 
 
 const PaymentForm = ({
-    dialogs, selectedOrder, setDialogs, setSelectedOrder
+    dialogs, selectedOrder, setDialogs, setSelectedOrder, onPaymentUpdated
 }) => {
 
     const [obj, setObj] = useState({
@@ -35,12 +35,17 @@ const PaymentForm = ({
 
     const handlePaymentUpdate = async (e) => {
         e.preventDefault();
-        console.log("Inside PaymentForm handlePaymentUpdate",selectedOrder);
-        await updatePaymentAmount(selectedOrder._id, {obj});
-        toast.success("Payment updated successfully!");
-        setDialogs(prev => ({ ...prev, openDetails: true, paymentDialog: false }));
-        setSelectedOrder(null);
-        setObj({ paidAmount: "", paymentMethod: "" });
+        try {
+            await updatePaymentAmount(selectedOrder.orderId || selectedOrder._id, obj);
+            toast.success("Payment updated successfully!");
+            setDialogs(prev => ({ ...prev, openDetails: true, paymentDialog: false }));
+            setSelectedOrder?.(null);
+            setObj({ paidAmount: "", paymentMethod: "Cash" });
+            await onPaymentUpdated?.();
+        } catch (error) {
+            console.error("Error updating payment:", error);
+            toast.error(error.response?.data?.message || "Unable to update payment.");
+        }
     }
 
 

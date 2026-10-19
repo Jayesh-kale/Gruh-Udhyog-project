@@ -1,6 +1,14 @@
-const API_URL =
-  process.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+import { API_URL } from "../config/env";
+
+async function parseResponse(response, fallbackMessage) {
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok || !result?.success) {
+    throw new Error(result?.message || fallbackMessage);
+  }
+
+  return result.data || result;
+}
 
 export async function createOnlineOrder(orderData) {
   const response = await fetch(
@@ -19,15 +27,7 @@ export async function createOnlineOrder(orderData) {
     }
   );
 
-  const result = await response.json();
-
-  if (!response.ok || !result.success) {
-    throw new Error(
-      result.message || "Unable to create order."
-    );
-  }
-
-  return result.data || result;
+  return parseResponse(response, "Unable to create order.");
 }
 
 export async function verifyRazorpayPayment(paymentData) {
@@ -43,13 +43,5 @@ export async function verifyRazorpayPayment(paymentData) {
     }
   );
 
-  const result = await response.json();
-
-  if (!response.ok || !result.success) {
-    throw new Error(
-      result.message || "Payment verification failed."
-    );
-  }
-
-  return result.data || result;
+  return parseResponse(response, "Payment verification failed.");
 }

@@ -17,7 +17,7 @@ import Card from "../../../components/common/Card";
 import RelatedProducts from "../../../components/customer/RelatedProducts/RelatedProducts";
 
 import QuantitySelector from "../../../components/customer/QuantitySelector/QuantitySelector";
-import { getImageUrl } from "../../../utils/getImageUrl";
+import ProductImage from "../../../components/customer/ProductImage/ProductImage";
 
 function ProductDetails() {
 
@@ -38,10 +38,11 @@ function ProductDetails() {
 
         fetchProduct();
 
+       
     }, [id]);
 
     async function fetchProduct() {
-
+        
         try {
 
             setLoading(true);
@@ -92,8 +93,8 @@ function ProductDetails() {
 
     }
 
+    
     if (!product) {
-
         return (
 
             <div className="container py-5">
@@ -124,8 +125,8 @@ function ProductDetails() {
                 </Link>
 
             </div>
-
-            <Card className="product-details-card">
+        
+            <Card className="product-details-card" >
 
                 <div className="row align-items-center g-5">
 
@@ -136,12 +137,9 @@ function ProductDetails() {
 
                         <div className="product-image-large">
 
-                            <img
-
-                                src={getImageUrl(product.image)}
-
+                            <ProductImage
+                                image={product.image}
                                 alt={product.name}
-
                             />
 
                         </div>

@@ -1,16 +1,31 @@
-# React + Vite
+# Gruh Udyog frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Local development
 
-Currently, two official plugins are available:
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Set `VITE_API_URL` to the backend API base URL, including `/api`, for example:
 
-## React Compiler
+```text
+VITE_API_URL=http://localhost:5000/api
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Production deployment
 
-## Expanding the ESLint configuration
+1. Set `VITE_API_URL` to the deployed backend URL before building.
+2. Run `npm ci` and `npm run build`.
+3. Serve the generated `dist` directory over HTTPS.
+4. Configure the host to rewrite unknown application paths to `index.html` so browser refreshes work with client-side routing.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The frontend does not contain server secrets. Only variables prefixed with `VITE_` are exposed to browser code.
+
+## Validation
+
+```bash
+npm run lint
+npm run build
+```

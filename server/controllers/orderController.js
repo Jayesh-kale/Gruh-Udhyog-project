@@ -121,7 +121,7 @@ exports.createOrder = async (req, res) => {
 
         const orderNumber = await generateOrderNumber();
 
-        const orders = await Order.create(
+        await Order.create(
             [
                 {
                     orderNumber,
@@ -168,19 +168,19 @@ exports.createOrder = async (req, res) => {
             { session }
         );
 
-        const createdOrder = orders[0];
+        // const createdOrder = orders[0];
 
-        await syncCreditBook(createdOrder, session);
+        // await syncCreditBook(createdOrder, session);
 
-        // Sync Production Queue
-        await syncProductionQueue(
+        // // Sync Production Queue
+        // await syncProductionQueue(
 
-            createdOrder,
-            null,
-            "Pending",
-            session
+        //     createdOrder,
+        //     null,
+        //     "Pending",
+        //     session
 
-        );
+        // );
 
         await session.commitTransaction();
 
@@ -785,6 +785,13 @@ exports.changeOrderStatus = async (req, res) => {
         });
 
         await order.save({ session });
+
+        if (
+            previousStatus === "Pending" &&
+            orderStatus === "Confirmed"
+        ) {
+            await syncCreditBook(order, session);
+        }
 
         await syncProductionQueue(
             order,

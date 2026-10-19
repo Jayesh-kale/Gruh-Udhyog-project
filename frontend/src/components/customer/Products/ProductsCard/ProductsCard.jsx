@@ -3,7 +3,7 @@ import "./ProductsCard.css";
 import Card from "../../../common/Card";
 import Badge from "../../../common/Badge";
 import Button from "../../../common/Button";
-import { getImageUrl } from "../../../../utils/getImageUrl";
+import ProductImage from "../../ProductImage/ProductImage";
 
 function ProductCard({ product }) {
 
@@ -13,8 +13,8 @@ function ProductCard({ product }) {
 
             <div className="product-image">
 
-                <img
-                    src={getImageUrl(product.image)}
+                <ProductImage
+                    image={product.image}
                     alt={product.name}
                 />
 

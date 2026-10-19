@@ -1,164 +1,13 @@
-/* .navbar{
-
-    position:sticky;
-
-    top:0;
-
-    z-index:1000;
-
-    background:#fff;
-
-    box-shadow:0 8px 25px rgba(0,0,0,.05);
-
-}
-
-.navbar-container{
-
-    max-width:1400px;
-
-    margin:auto;
-
-    padding:18px 40px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-}
-
-.logo{
-
-    font-size:28px;
-
-    font-weight:700;
-
-    color:var(--primary);
-
-    text-decoration:none;
-
-}
-
-.nav-links{
-
-    display:flex;
-
-    gap:35px;
-
-}
-
-.nav-links a{
-
-    text-decoration:none;
-
-    color:var(--text-dark);
-
-    font-weight:500;
-
-    transition:.3s;
-
-}
-
-.nav-links a:hover,
-
-.nav-links a.active{
-
-    color:var(--primary);
-
-}
-
-.navbar-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:18px;
-
-}
-
-.icon-btn{
-
-    color:var(--text-dark);
-
-}
-
-.profile-btn{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    text-decoration:none;
-
-    color:var(--text-dark);
-
-}
-
-.menu-btn{
-
-    display:none;
-
-    border:none;
-
-    background:none;
-
-    cursor:pointer;
-
-}
-
-@media(max-width:992px){
-
-.nav-links{
-
-    position:absolute;
-
-    top:75px;
-
-    left:0;
-
-    width:100%;
-
-    background:#fff;
-
-    flex-direction:column;
-
-    padding:20px;
-
-    display:none;
-
-}
-
-.nav-links.active{
-
-    display:flex;
-
-}
-
-.menu-btn{
-
-    display:block;
-
-}
-
-} */
- /* ===========================
-   NAVBAR
-=========================== */
-
 .navbar{
     position:sticky;
     top:0;
     z-index:1000;
 
-    background:rgba(255,255,255,0.92);
+    background:rgba(250,253,248,0.94);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
 
-    border-bottom:1px solid rgba(0,0,0,.06);
+    border-bottom:1px solid rgba(46,125,50,.12);
 
     box-shadow:0 10px 35px rgba(0,0,0,.08);
 
@@ -169,38 +18,63 @@
     max-width:1400px;
     margin:auto;
 
-    padding:18px 40px;
+    padding:12px 32px;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:32px;
 }
 
-/* ===========================
-   LOGO
-=========================== */
 
-.logo{
-    font-size:30px;
+/* .logo{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    margin:0 !important;
+    font-size:40px;
     font-weight:800;
-    gap: 20px;
     text-decoration:none;
 
-    color:var(--primary);
+    color:#1b5e20;
 
     letter-spacing:.5px;
 
-    transition:.3s;
+    transition:transform .35s ease, filter .35s ease;
+} */
+
+.logo::before{
+    content:"";
+    position:absolute;
+    inset:7px;
+    z-index:-1;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,123,0,.24),transparent 68%);
+    filter:blur(7px);
+    opacity:.55;
+    animation:logoGlow 3.2s ease-in-out infinite;
+}
+
+.logo img{
+    display:block;
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    transform-origin:center;
+    animation:logoFloat 3.8s ease-in-out infinite;
 }
 
 .logo:hover{
-    transform:scale(1.05);
-    color:#ff7b00;
+    transform:translateY(-2px) scale(1.08);
+    filter:drop-shadow(0 9px 12px rgba(46,125,50,.24));
+    color:#86acd4;
 }
 
-/* ===========================
-   NAV LINKS
-=========================== */
+.logo:hover img{
+    animation:logoSpin .75s cubic-bezier(.22, .34, .1, 1);
+}
 
 .nav-links{
     display:flex;
@@ -213,7 +87,7 @@
 
     text-decoration:none;
 
-    color:var(--text-dark);
+    color:#33563a;
 
     font-weight:600;
 
@@ -237,24 +111,16 @@
 
 .nav-links a.active{
     color:#fff;
-    background:linear-gradient(135deg,var(--primary),#ff7b00);
+    background:linear-gradient(145deg,var(--primary),#ff7b00);
 
     box-shadow:0 10px 20px rgba(255,120,0,.35);
 }
-
-/* ===========================
-   RIGHT SECTION
-=========================== */
 
 .navbar-right{
     display:flex;
     align-items:center;
     gap:15px;
 }
-
-/* ===========================
-   CART ICON
-=========================== */
 
 .icon-btn{
     width:46px;
@@ -284,9 +150,6 @@
     box-shadow:0 10px 20px rgba(255,120,0,.30);
 }
 
-/* ===========================
-   PROFILE BUTTON
-=========================== */
 
 .profile-btn{
     display:flex;
@@ -321,10 +184,6 @@
     font-size:18px;
 }
 
-/* ===========================
-   MENU BUTTON
-=========================== */
-
 .menu-btn{
     display:none;
 
@@ -347,18 +206,15 @@
     color:#fff;
 }
 
-/* ===========================
-   MOBILE
-=========================== */
-
 @media(max-width:992px){
 
     .navbar-container{
-        padding:16px 22px;
+        padding:12px 22px;
+        gap:20px;
     }
 
     .logo{
-        font-size:24px;
+        font-size:80px;
     }
 
     .nav-links{
@@ -411,7 +267,8 @@
 @media(max-width:600px){
 
     .navbar-container{
-        padding:15px;
+        padding:10px 15px;
+        gap:12px;
     }
 
     .logo{
@@ -432,20 +289,58 @@
 
 }
 
-/* ===========================
-   ANIMATION
-=========================== */
-
-@keyframes slideDown{
-
-    from{
-        opacity:0;
-        transform:translateY(-20px);
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
 
-    to{
-        opacity:1;
-        transform:translateY(0);
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
     }
 
+    50% {
+        transform: translateY(-4px) rotate(1.5deg);
+    }
+}
+
+@keyframes logoGlow {
+    0%, 100% {
+        transform: scale(.88);
+        opacity: .4;
+    }
+
+    50% {
+        transform: scale(1.12);
+        opacity: .8;
+    }
+}
+
+@keyframes logoSpin {
+    0% {
+        transform: rotate(0deg) scale(3);
+      
+    }
+
+    55% {
+        transform: rotate(7deg) scale(1.08);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logo img,
+    .logo::before {
+        animation: none;
+    }
 }

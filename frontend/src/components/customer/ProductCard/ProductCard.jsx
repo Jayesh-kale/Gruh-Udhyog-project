@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { FiShoppingCart, FiEye, FiStar } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useCart } from "../../../services/context/CartContext";
-import { getImageUrl } from "../../../utils/getImageUrl";
+import ProductImage from "../ProductImage/ProductImage";
 import "./ProductCard.css";
 
 function ProductCard({ product }) {
@@ -11,8 +11,8 @@ function ProductCard({ product }) {
     return (
         <div className="product-card">
             <div className="product-image">
-                <img
-                    src={getImageUrl(product.image)}
+                <ProductImage
+                    image={product.image}
                     alt={product.name}
                 />
                 <span className="product-category">{product.category}</span>

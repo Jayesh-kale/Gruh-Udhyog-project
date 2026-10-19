@@ -29,6 +29,7 @@ import Checkout from "../pages/customer/Checkout/Checkout";
 import CustomerOrders from "../pages/customer/Orders/Orders";
 import Profile from "../pages/customer/Profile/Profile.jsx";
 import CreditDetails from "../pages/admin/CreditDetails/CreditDetails.jsx";
+import ContactUs from "../pages/customer/Contact/ContactUs.jsx";
 // import Unauthorized from "../pages/Unauthorized";
 // import NotFound from "../pages/NotFound";
 
@@ -59,6 +60,14 @@ function AppRoutes() {
 
             <Route
                 path="/forget_password"
+                element={
+                    <GuestRoute>
+                        <ForgetPassword />
+                    </GuestRoute>
+                }
+            />
+            <Route
+                path="/reset-password/:token"
                 element={
                     <GuestRoute>
                         <ForgetPassword />
@@ -112,6 +121,11 @@ function AppRoutes() {
                         path="profile"
                         element={<Profile />}
                     />
+
+                    <Route
+                        path="contact"
+                        element={<ContactUs />}
+                    />
                 </Route>
             </Route>
 
@@ -160,7 +174,7 @@ function AppRoutes() {
                         element={<CreditBook />}
                     />
                     <Route
-                        path="personDetails"
+                        path="personDetails/:id"
                         element={<CreditDetails />}
                     />
 
@@ -172,16 +186,10 @@ function AppRoutes() {
             </Route>
 
             {/* ================= Fallback ================= */}
-
-            {/* <Route
-                path="/unauthorized"
-                element={<Unauthorized />}
-            /> */}
-
-            {/* <Route
+            <Route
                 path="*"
-                element={<NotFound />}
-            /> */}
+                element={<Navigate to="/login" replace />}
+            />
         </Routes>
     );
 }

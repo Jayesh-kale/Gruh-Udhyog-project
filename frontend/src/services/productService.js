@@ -8,6 +8,13 @@ export const getProduct = async (params) => {
     return response.data;
 };
 
+export const getRelatedProducts = async (params) => {
+    const response = await api.get("/products/related-Products", {
+        params
+    });
+    return response.data;
+}
+
 export const getProductById = async (id) => {
     const response = await api.get(`/products/${id}`);
     return response.data;

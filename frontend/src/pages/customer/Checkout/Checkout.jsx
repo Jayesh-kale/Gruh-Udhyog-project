@@ -21,7 +21,7 @@ import Input from "../../../components/common/Input";
 import Button from "../../../components/common/Button";
 import Modal from "../../../components/common/Modal";
 import Badge from "../../../components/common/Badge";
-import { getImageUrl } from "../../../utils/getImageUrl";
+import ProductImage from "../../../components/customer/ProductImage/ProductImage";
 
 
 
@@ -447,12 +447,9 @@ function Checkout() {
 
                                 >
 
-                                    <img
-
-                                        src={getImageUrl(item.image)}
-
+                                    <ProductImage
+                                        image={item.image}
                                         alt={item.name}
-
                                     />
 
                                     <div className="summary-product-info">

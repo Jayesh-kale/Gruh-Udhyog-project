@@ -31,7 +31,7 @@ function Footer() {
 
                         <h3 className="footer-logo">
 
-                            GruhUdyog
+                          <span><img src="https://res.cloudinary.com/drky4ztad/image/upload/v1792432703/JAY_Gruh_Udhyog_Heritage_Logo.png" alt="" style={{ width: '70px', height: '70px' ,backgroundColor: 'lightgray' ,borderRadius: '20%' }} />Jay GruhUdyog</span> 
 
                         </h3>
 
@@ -88,13 +88,23 @@ function Footer() {
 
                         <ul>
 
-                            <li><Link className="nav-link" to="/categories/papad">Papad</Link></li>
+                            {/* <li><Link className="nav-link" to="/categories/papad">Papad</Link></li>
 
                             <li><Link className="nav-link" to="/categories/shevya">Shevya</Link></li>
 
                             <li><Link className="nav-link"  to="/categories/kurdai">Kurdai</Link></li>
 
                             <li><Link className="nav-link" to="/categories/cakes">Cakes</Link></li>
+
+                            <li><Link className="nav-link" to="/products">Many More</Link></li> */}
+
+                            <li><Link className="nav-link" to="/products">Papad</Link></li>
+
+                            <li><Link className="nav-link" to="/products">Shevya</Link></li>
+
+                            <li><Link className="nav-link"  to="/products">Kurdai</Link></li>
+
+                            <li><Link className="nav-link" to="/products">Cakes</Link></li>
 
                             <li><Link className="nav-link" to="/products">Many More</Link></li>
 
@@ -122,7 +132,7 @@ function Footer() {
 
                                 <FaEnvelope />
 
-                                <span ><Link to="mailto:info@gruhudyog.com">info@gruhudyog.com</Link></span>
+                                <span ><Link to="mailto:jayeshkale7972@gmail.com">jayeshkale7972@gmail.com</Link></span>
 
                             </li>
                             <li>

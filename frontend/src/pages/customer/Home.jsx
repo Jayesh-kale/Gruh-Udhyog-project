@@ -20,7 +20,7 @@ function Home() {
             <SeasonalProducts/>
             <HowItWorks/>
             <CallToAction/>
-            <ProductDetails/>
+          
         </>
 
     );

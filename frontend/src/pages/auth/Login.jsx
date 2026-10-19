@@ -38,8 +38,14 @@ function Login() {
         <div className="login-page">
 
             <Card className="login-card">
-
-                <h2>Kale's GruhUdyog </h2>
+                <div className="w-100">
+                    <img
+                        src="https://res.cloudinary.com/drky4ztad/image/upload/v1792432703/JAY_Gruh_Udhyog_Heritage_Logo.png"
+                        alt="Logo"
+                        className="d-block mx-auto w-50 h-50"
+                    />
+                </div>
+                <h2>Jay Gruh Udyog </h2>
 
                 <p>
 
@@ -111,7 +117,7 @@ function Login() {
 
                 <div className="login-footer">
                     <span>
-                        Forget Password? <Link to="/forget-password">Click here</Link>
+                        Forgot Password? <Link to="/forget_password">Click here</Link>
                     </span>
                 </div>
                 <div className="login-footer" >

@@ -42,9 +42,10 @@ function Navbar() {
 
                 <Link
                     to="/"
-                    className="logo"
+                    className="logo blend"
                 >
-                    Kale's Store
+                    <img src="https://res.cloudinary.com/drky4ztad/image/upload/v1792432703/JAY_Gruh_Udhyog_Heritage_Logo.png" alt="Jay Gruh Udhyog" srcset=""/>
+                    
                 </Link>
 
                 {/* Desktop Menu */}

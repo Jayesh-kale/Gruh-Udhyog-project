@@ -1,7 +1,5 @@
 .category-section{
-
     padding:80px 0;
-
     background:#ffffff;
 
 }
@@ -25,9 +23,7 @@
 }
 
 .section-header h2{
-
     font-size:40px;
-
     color:var(--text-dark);
 
     margin-bottom:10px;
@@ -53,9 +49,7 @@
 }
 
 .category-card{
-
     background:white;
-
     border-radius:22px;
 
     padding:35px 20px;
@@ -67,7 +61,6 @@
     color:inherit;
 
     box-shadow:0 8px 30px rgba(0,0,0,.06);
-
     transition:.35s;
 
 }
@@ -107,5 +100,4 @@
     font-size:20px;
 
     font-weight:600;
-
 }

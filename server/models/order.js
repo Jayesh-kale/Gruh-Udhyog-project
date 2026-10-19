@@ -361,6 +361,23 @@ const orderSchema = new mongoose.Schema(
             default: null,
         },
 
+        whatsappReceiptStatus: {
+            type: String,
+            enum: ["Pending", "Sent", "Failed", "Disabled"],
+            default: "Pending",
+        },
+
+        whatsappReceiptSentAt: {
+            type: Date,
+            default: null,
+        },
+
+        whatsappReceiptError: {
+            type: String,
+            trim: true,
+            default: null,
+        },
+
         paymentHistory: {
             type: [paymentHistorySchema],
             default: [],

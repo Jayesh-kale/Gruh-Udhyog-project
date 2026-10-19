@@ -12,7 +12,7 @@ import Button from "../../../common/Button/Button";
 import ConfirmDialog from "../../../common/ConfirmDialog/ConfirmDialog";
 
 import QuantitySelector from "../../QuantitySelector/QuantitySelector";
-import { getImageUrl } from "../../../../utils/getImageUrl";
+import ProductImage from "../../ProductImage/ProductImage";
 
 function CartItem({
 
@@ -40,12 +40,9 @@ function CartItem({
 
                 <div className="cart-item-image">
 
-                    <img
-
-                        src={getImageUrl(item.image)}
-
+                    <ProductImage
+                        image={item.image}
                         alt={item.name}
-
                     />
 
                 </div>

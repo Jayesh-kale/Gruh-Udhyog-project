@@ -3,7 +3,7 @@ import "./RelatedProducts.css";
 import { useEffect, useState } from "react";
 import AOS from "aos";
 
-import { getProduct } from "../../../services/productService";
+import { getProduct, getRelatedProducts } from "../../../services/productService";
 
 import Loader from "../../../components/common/Loader";
 import EmptyState from "../../../components/common/EmptyState";
@@ -34,7 +34,7 @@ function RelatedProducts({
             setLoading(true);
 
             const response =
-                await getProducts({ category });
+                await getRelatedProducts({ category });
 
             if (response.success) {
 

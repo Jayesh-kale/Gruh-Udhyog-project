@@ -1,21 +1,51 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../../components/common';
 import PaymentForm from '../../../components/admin/PaymentForm/PaymentForm';
+import { getCreditEntryById } from '../../../services/creditBookService';
 
 const CreditDetails = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
-    
-    const [customer, setCustomer] = useState(state);
-    const [loading, setLoading] = useState(false);
-    
+    const { id } = useParams();
+
+    const [customer, setCustomer] = useState(state || null);
+    const [loading, setLoading] = useState(Boolean(id));
+    const [error, setError] = useState('');
+
     const [dialogs, setDialogs] = useState({
         paymentDialog: false,
         openDetails: false,
     });
-    
-  
+
+    const loadCreditEntry = useCallback(async () => {
+        if (!id) {
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const response = await getCreditEntryById(id);
+            const record = response?.data?.data?.creditEntry;
+            if (!record) {
+                throw new Error('Credit entry was not found.');
+            }
+            setCustomer({ record });
+            setError('');
+        } catch (requestError) {
+            console.error('Error fetching credit entry:', requestError);
+            setError(requestError.response?.data?.message || 'Unable to load this credit entry.');
+        } finally {
+            setLoading(false);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadCreditEntry();
+    }, [loadCreditEntry]);
+
+
     if (loading) {
         return (
             <div className="d-flex flex-column justify-content-center align-items-center min-vh-100 bg-light">
@@ -24,13 +54,13 @@ const CreditDetails = () => {
             </div>
         );
     }
-    
-    if (!customer || !customer.record) {
+
+    if (error || !customer || !customer.record) {
         return (
             <div className="container mt-5 text-center max-w-sm">
                 <div className="alert alert-danger shadow-sm border-0 rounded-4 p-4" role="alert">
                     <h4 className="alert-heading fw-bold">Data Missing</h4>
-                    <p className="mb-3 text-muted">No client or ledger information was passed to this route handler.</p>
+                    <p className="mb-3 text-muted">{error || 'No client or ledger information was passed to this route handler.'}</p>
                     <button onClick={() => navigate(-1)} className="btn btn-danger btn-sm px-4 rounded-pill">Go Back</button>
                 </div>
             </div>
@@ -113,8 +143,8 @@ const CreditDetails = () => {
 
                     <div className="text-md-end">
                         <div className={`badge px-4 py-2.5 fs-6 rounded-pill border shadow-sm ${rec.status === 'Cleared'
-                                ? 'bg-success bg-opacity-10 text-success border-success border-opacity-25'
-                                : 'bg-warning bg-opacity-10 text-warning border-warning border-opacity-25'
+                            ? 'bg-success bg-opacity-10 text-success border-success border-opacity-25'
+                            : 'bg-warning bg-opacity-10 text-warning border-warning border-opacity-25'
                             }`}>
                             ● {rec.status}
                         </div>
@@ -200,12 +230,14 @@ const CreditDetails = () => {
                     dialogs={dialogs}
                     setDialogs={setDialogs}
                     selectedOrder={rec}
+                    setSelectedOrder={() => { }}
+                    onPaymentUpdated={loadCreditEntry}
                 />
             </div>
 
 
             <div>
-                <Button variant="outline" className="mt-3" onClick={() => {setDialogs(prev => ({ ...prev, paymentDialog: true }))}}>
+                <Button variant="outline" className="mt-3" onClick={() => { setDialogs(prev => ({ ...prev, paymentDialog: true })) }}>
                     Pay Now
                 </Button>
             </div>
@@ -223,13 +255,18 @@ const CreditDetails = () => {
                                 <div>
                                     <span className="">Payment {index + 1}</span>
                                     <div className="small fw-semibold text-secondary text-dark">
-                                        {payment.paidAt ? `₹${payment.amount} on ${new Date(payment.paidAt).toLocaleDateString()}`
-                                            : `₹${payment.amount} via ${payment.paymentMethod}`}
+                                        {payment.paidAt ? `₹${payment.amount} on ${new Date(payment.paidAt).toLocaleDateString()} via ${payment.paymentMethod}` : `₹${payment.amount} - Pending`}
                                     </div>
                                 </div>
                                 <span className={`badge rounded-pill px-3 py-2 fs-6 fw-medium ${payment.paidAt ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'
                                     }`}>
-                                    {payment.paidAt ? 'Paid' : 'Pending'}
+                                    {payment.razorpayOrderId != null
+                                        ? (payment.paidAt
+                                            ? `Paid via Razorpay`
+                                            : 'Pending')
+                                        : (payment.paidAt
+                                            ? `Paid `
+                                            : 'Pending')}
                                 </span>
                             </div>
                         ))}

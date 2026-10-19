@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../../services/context/authContext.jsx";
 import "./Profile.css";
 import { getMyOrders } from "../../../services/orderService";
-import toast from "react-hot-toast";
 
 const Profile = () => {
     const { user } = useAuth();
-
-    console.log("User Data:", user._id); // Log the user data for debugging
-
-    const [ordersInfo,setOrdersInfo] = useState([]);
+    const [ordersInfo, setOrdersInfo] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -19,42 +15,37 @@ const Profile = () => {
         village: user?.village || "",
     });
 
-    const getOrdersDetails = () => {
-        const data  = getAllOrdersStatistics();
-        
-    }
-
     const loadRecords = async () => {
         try {
-           const response = await getMyOrders();
-        //    setOrdersInfo(response);
-           console.log("Orders Info:", response.data.orders); // Log the response for debugging
-           setOrdersInfo(response.data.orders);
+            const response = await getMyOrders();
+            setOrdersInfo(response?.data?.orders || []);
         } catch (error) {
             console.error("Error fetching orders:", error);
-            
         }
-    }
-
-   
-
-    const [stats] = useState({
-        totalOrders: 12,
-        pendingOrders: 2,
-        completedOrders: 8,
-        cancelledOrders: 2,
-    });
-
+    };
 
     useEffect(() => {
-
         if (user) {
-
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             loadRecords();
-
         }
-
     }, [user]);
+
+    const stats = useMemo(() => {
+        const status = (order) => String(order.orderStatus || "").toLowerCase();
+        return {
+            totalOrders: ordersInfo.length,
+            pendingOrders: ordersInfo.filter((order) =>
+                ["pending", "processing", "ready"].includes(status(order))
+            ).length,
+            completedOrders: ordersInfo.filter((order) =>
+                ["completed", "delivered"].includes(status(order))
+            ).length,
+            cancelledOrders: ordersInfo.filter((order) =>
+                ["cancelled", "canceled"].includes(status(order))
+            ).length,
+        };
+    }, [ordersInfo]);
 
 
     const handleChange = (e) => {
@@ -73,10 +64,7 @@ const Profile = () => {
 
         e.preventDefault();
 
-        console.log("Updated Profile:", formData);
-
         setIsEditing(false);
-
     };
 
 

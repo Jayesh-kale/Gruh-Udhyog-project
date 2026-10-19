@@ -1195,7 +1195,20 @@ const syncProductionQueue = async (
             currentStatus === "Confirmed"
         ) {
 
-            // Nothing to change in production queue.
+            addPending(
+                queue,
+                orderType,
+                qty
+            );
+
+            saveHistory(
+                queue,
+                order,
+                qty,
+                "Order Created",
+                "Pending",
+                "Confirmed"
+            );
 
         }
 

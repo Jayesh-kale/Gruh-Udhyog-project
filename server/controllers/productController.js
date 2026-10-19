@@ -687,22 +687,26 @@ exports.getProductCategory = async (req, res) => {
 //to get featured products
 exports.getFeaturedProducts = async (req, res) => {
 
-    const products = await Product.find({
+    try {
+        const products = await Product.find({
 
-        isListedOnline: true,
+            isActive: true,
+            isListedOnline: true,
+            isFeatured: true,
 
-        isFeatured: true
+        })
+        .sort({ displayOrder: 1 })
+        .limit(8);
 
-    })
-    .sort({ displayOrder: 1 })
-    .limit(8);
-
-    sendSuccess(
-        res,
-        200,
-        "Featured products fetched successfully",
-        { products }
-    );
+        return sendSuccess(
+            res,
+            200,
+            "Featured products fetched successfully",
+            { products }
+        );
+    } catch (error) {
+        return sendError(res, 500, error.message);
+    }
 
 };
 
@@ -749,5 +753,19 @@ exports.getSeasonalProducts = async (req, res) => {
             500,
             error.message
         );
+    }
+}
+
+exports.getRelatedProducts = async(req,res) => {
+    try {
+        const { category } = req.query;
+        const products = await Product.find({ category, isActive: true });
+        
+        if (products.length === 0) {
+            return sendError(res, 404, "No related products found.");
+        }
+        return sendSuccess(res, 200, "Related products fetched successfully.", { products });
+    } catch (error) {
+        return sendError(res, 500, error.message);
     }
 }

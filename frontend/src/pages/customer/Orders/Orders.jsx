@@ -15,7 +15,7 @@ import EmptyState from "../../../components/common/EmptyState";
 import { getMyOrders } from "../../../services/orderService";
 import { Modal } from "../../../components/common";
 import PaymentForm from "../../../components/admin/PaymentForm/PaymentForm"
-import { getImageUrl } from "../../../utils/getImageUrl";
+import ProductImage from "../../../components/customer/ProductImage/ProductImage";
 
 function Orders() {
 
@@ -321,12 +321,9 @@ function Orders() {
 
                                     >
 
-                                        <img
-
-                                            src={getImageUrl(item.image)}
-
+                                        <ProductImage
+                                            image={item.image}
                                             alt={item.productName}
-
                                         />
 
                                         <div>

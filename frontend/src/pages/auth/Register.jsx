@@ -28,6 +28,9 @@ function Register() {
 
             toast.success("Registration Successfull.Go To Login..");
 
+            setTimeout(() => {
+                window.navigation.navigate("/login");
+            }, 600);
             
 
         } catch (error) {
@@ -50,7 +53,15 @@ function Register() {
 
             <Card className="register-card">
 
-                <h2 className="text-center">GruhUdyog CRM</h2>
+                <div className="w-100">
+                    <img
+                        src="https://res.cloudinary.com/drky4ztad/image/upload/v1792432703/JAY_Gruh_Udhyog_Heritage_Logo.png"
+                        alt="Logo"
+                        className="d-block mx-auto" 
+                        style={{ "height": "75px" }}
+                    />
+                </div>
+                <h2 className="text-center">Jay Gruh Udyog</h2>
 
                 <p>Create your account</p>
 

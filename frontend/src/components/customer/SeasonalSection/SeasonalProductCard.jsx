@@ -1,5 +1,5 @@
 import { Badge, Button, Card } from "../../common";
-import { getImageUrl } from "../../../utils/getImageUrl";
+import ProductImage from "../ProductImage/ProductImage";
 
 
 
@@ -13,8 +13,8 @@ function SeasonalProductCard({ product,icon }) {
                 <small>{product.season?.join(", ")}</small>
             </Badge>
 
-            <img
-                src={getImageUrl(product.image)}
+            <ProductImage
+                image={product.image}
                 alt={product.name}
                 className="img-fluid rounded mb-3"
             />

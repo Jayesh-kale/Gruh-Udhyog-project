@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getCreditBookData } from '../../../services/creditBookService';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/common/SearchBar/SearchBar.jsx';
@@ -7,15 +7,18 @@ import SearchBar from '../../../components/common/SearchBar/SearchBar.jsx';
 const CreditBook = () => {
     const navigate = useNavigate();
     // 1. Initialize state with the full data object
-    const [creditBookData, setCreditBookData] = useState([]);
+    const [creditBookData, setCreditBookData] = useState({
+        creditEntries: [],
+        totalRecords: 0,
+    });
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
 
     // 2. Function to fetch credit book data
     const fetchCreditBookData = async () => {
         try {
             const response = await getCreditBookData();
-            setCreditBookData(response.data.data);
-            console.log("Fetched Credit Book Data:", response.data.data);
+            setCreditBookData(response.data.data || { creditEntries: [], totalRecords: 0 });
         } catch (error) {
             console.error("Error fetching credit book data:", error);
         }
@@ -23,55 +26,39 @@ const CreditBook = () => {
 
     // 2. Use useEffect to fetch data on component mount
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchCreditBookData();
     }, []);
 
     //For search functionality
     const handleSearchChange = (e) => {
-        const { value } = e.target;
-        setSearchTerm(value);
-        if (value) {
-            setCreditBookData(prev => ({
-                ...prev,
-                creditEntries: prev.creditEntries.filter(entry =>
-                    entry.customerName.toLowerCase().includes(value.toLowerCase()) ||
-                    entry.customerPhone.includes(value) ||
-                    entry.productSummary.toLowerCase().includes(value.toLowerCase())
-
-                )
-            }));
-        }
-        else {
-            fetchCreditBookData();
-        }
+        setSearchTerm(e.target.value);
     };
 
     const handleChange = (e) => {
-        const selectedStatus = e.target.value;
-        if (selectedStatus) {
-            setCreditBookData(prev => ({
-                ...prev,
-                creditEntries: prev.creditEntries.filter(entry => entry.status === selectedStatus)
-            }));
-        }
-        else {
-            fetchCreditBookData();
-        }
+        setSelectedStatus(e.target.value);
     }
 
     const handleViewDetails = (entry) => {
-        navigate(`/admin/personDetails`, { state: { record: entry } });
+        navigate(`/admin/personDetails/${entry._id}`, { state: { record: entry } });
     }
 
+    const visibleEntries = creditBookData.creditEntries.filter((entry) => {
+        const search = searchTerm.toLowerCase();
+        return (!selectedStatus || entry.status === selectedStatus) &&
+            (!search ||
+                entry.customerName?.toLowerCase().includes(search) ||
+                entry.customerPhone?.includes(search) ||
+                entry.productSummary?.toLowerCase().includes(search));
+    });
+
     const calculateTotalAmount = () => {
-        if (!creditBookData.creditEntries) return 0;
-        const totalAmount = creditBookData.creditEntries.reduce((total, entry) => total + entry.totalAmount, 0);
+        const totalAmount = visibleEntries.reduce((total, entry) => total + Number(entry.totalAmount || 0), 0);
         return totalAmount;
     }
 
     const calculateTotalRemaining = () => {
-        if (!creditBookData.creditEntries) return 0;
-        const totalRemaining = creditBookData.creditEntries.reduce((total, entry) => total + entry.remainingAmount, 0);
+        const totalRemaining = visibleEntries.reduce((total, entry) => total + Number(entry.remainingAmount || 0), 0);
         return totalRemaining;
     }
 
@@ -129,7 +116,7 @@ const CreditBook = () => {
                 </div>
 
             </div>
-            <p>{creditBookData.totalRecords} credit entries found.</p>
+            <p>{visibleEntries.length} credit entries found.</p>
             <div style={{ overflowX: 'auto', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', backgroundColor: '#ffffff' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Arial, sans-serif', textAlign: 'left', minWidth: '800px' }}>
                     <thead>
@@ -149,7 +136,7 @@ const CreditBook = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {creditBookData.creditEntries && creditBookData.creditEntries.map((entry, index) => (
+                        {visibleEntries.map((entry, index) => (
                             <tr key={entry._id || index} style={{ borderBottom: '1px solid #e5e7eb', backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
                                 {/* <td>{entry.orderId}</td> */}
                                 <td style={{ padding: '14px 16px', fontSize: '14px', color: '#111827' }}>{entry.customerName}</td>
