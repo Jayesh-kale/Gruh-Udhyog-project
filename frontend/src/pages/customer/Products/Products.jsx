@@ -13,7 +13,7 @@ import EmptyState from "../../../components/common/EmptyState";
 
 import { getProduct, categoryService } from "../../../services/productService";
 
-import ProductGrid from "../../../components/customer/products/ProductGrid/ProductGrid";
+import ProductGrid from "../../../components/customer/Products/ProductGrid/ProductGrid.jsx";
 
 function Products() {
 
