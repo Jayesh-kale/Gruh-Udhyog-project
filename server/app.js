@@ -19,7 +19,7 @@ const { verifyMailTransporter } = require("./utils/mailTransporter");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+const allowedOrigins = ("https://gruh-udhyog-project-mngpqs7hg-jayesh-kale08.vercel.app" || "http://localhost:5173")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
