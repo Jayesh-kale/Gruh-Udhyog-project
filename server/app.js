@@ -166,11 +166,11 @@ const app = express();
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "https://gruh-udhyog-project-y179.vercel.app",
+    ...(process.env.FRONTEND_URL || "").split(","),
+    "https://gruh-udhyog-project.vercel.app",
     "http://localhost:5173",
 ]
-    .filter(Boolean)
+    .filter((origin) => origin.trim())
     .map((origin) => origin.trim().replace(/\/$/, ""));
 
 const vercelPreviewRegex =
