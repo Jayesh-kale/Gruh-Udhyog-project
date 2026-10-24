@@ -110,7 +110,7 @@ const Dashboard = () => {
                         <span>Total Orders</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-receipt"><CiReceipt /></i>
+                            <i className="fa-solid fa-receipt"></i>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@ const Dashboard = () => {
                         <span>Today's Sales</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-indian-rupee-sign"><FaIndianRupeeSign /></i>
+                            <i className="fa-solid fa-indian-rupee-sign"></i>
                         </div>
                     </div>
 
@@ -152,7 +152,7 @@ const Dashboard = () => {
                         <span>Pending Orders</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-clock"><LuCalendarClock /></i>
+                            <i className="fa-solid fa-clock"></i>
                         </div>
                     </div>
 
@@ -173,7 +173,7 @@ const Dashboard = () => {
                         <span>Outstanding Credit</span>
 
                         <div className="dashboard-icon">
-                            <i className="fa-solid fa-book"><FaBook /></i>
+                            <i className="fa-solid fa-book"></i>
                         </div>
                     </div>
 
