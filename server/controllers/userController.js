@@ -5,6 +5,16 @@ const User = require("../models/user");
 const order = require("../models/order");
 const { mailTransporter } = require("../utils/mailTransporter");
 
+const authCookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite:
+        process.env.NODE_ENV === "production"
+            ? "none"
+            : process.env.COOKIE_SAME_SITE || "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 // ================= Register User =================
 exports.registerUser = async (req, res) => {
     try {
@@ -120,12 +130,7 @@ exports.loginUser = async (req, res) => {
         );
 
         // Store JWT in Cookie
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.COOKIE_SAME_SITE || "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, authCookieOptions);
 
         res.status(200).json({
             success: true,
@@ -152,11 +157,7 @@ exports.loginUser = async (req, res) => {
 //for user logout
 exports.logoutUser = async (req, res) => {
 
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: process.env.COOKIE_SAME_SITE || "lax",
-        secure: process.env.NODE_ENV === "production"
-    });
+    res.clearCookie("token", authCookieOptions);
 
     res.status(200).json({
         success: true,
