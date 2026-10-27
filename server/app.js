@@ -159,6 +159,7 @@ const productionQueueRoutes = require("./routes/productionQueueRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const paymentController = require("./controllers/paymentController");
 const { verifyMailTransporter } = require("./utils/mailTransporter");
 
 const app = express();
@@ -245,8 +246,12 @@ app.use(
     })
 );
 
-// Razorpay webhook must be registered before express.json()
-app.use("/api/payments", paymentRoutes);
+// Razorpay webhook must be registered before express.json().
+app.post(
+    "/api/payments/razorpay/webhook",
+    express.raw({ type: "application/json" }),
+    paymentController.handleRazorpayWebhook
+);
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -263,6 +268,7 @@ app.use(
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/auth", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/credit-book", creditBookRoutes);
 app.use("/api/production-queue", productionQueueRoutes);

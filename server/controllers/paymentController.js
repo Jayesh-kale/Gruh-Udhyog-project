@@ -313,6 +313,10 @@ exports.createOrder = async (req, res) => {
 exports.verifyPayment = async (req, res) => {
   try {
     const razorpay = getRazorpay();
+    if (!req.body || typeof req.body !== "object") {
+      return sendError(res, 400, "Payment verification details are missing.");
+    }
+
     const {
       razorpay_payment_id: paymentId,
       razorpay_order_id: razorpayOrderId,
