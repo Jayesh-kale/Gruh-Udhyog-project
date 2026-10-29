@@ -34,7 +34,24 @@ function ProductDetails() {
     const [loading, setLoading] = useState(true);
 
     const [quantity, setQuantity] = useState(1);
+    const [selectedPackage, setSelectedPackage] = useState(null);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+    const availablePackages = product?.packages?.length
+        ? product.packages.map((item, index) => ({
+            ...item,
+            _id: item._id || `package-${index}`,
+            packageIndex: index
+        }))
+        : product
+            ? [{
+                _id: "default",
+                label: `1 ${product.unit}`,
+                quantity: 1,
+                unit: product.unit,
+                price: product.defaultOnlinePrice
+            }]
+            : [];
 
     async function fetchProduct() {
         
@@ -47,7 +64,26 @@ function ProductDetails() {
 
             if (response.success) {
 
-                setProduct(response.data.product);
+                const fetchedProduct = response.data.product;
+                const normalizedPackages = fetchedProduct.packages?.map((item, index) => ({
+                    ...item,
+                    _id: item._id || `package-${index}`,
+                    packageIndex: index
+                }));
+                const normalizedProduct = {
+                    ...fetchedProduct,
+                    packages: normalizedPackages
+                };
+                setProduct(normalizedProduct);
+                setSelectedPackage(
+                    normalizedPackages?.[0] || {
+                        _id: "default",
+                        label: `1 ${fetchedProduct.unit}`,
+                        quantity: 1,
+                        unit: fetchedProduct.unit,
+                        price: fetchedProduct.defaultOnlinePrice
+                    }
+                );
 
             }
 
@@ -78,7 +114,16 @@ function ProductDetails() {
             return;
         }
 
-        addToCart(product, quantity);
+        addToCart({
+            ...product,
+            packageId: selectedPackage?._id?.startsWith("package-")
+                ? undefined
+                : selectedPackage?._id === "default"
+                ? undefined
+                : selectedPackage?._id,
+            packageIndex: selectedPackage?.packageIndex,
+            selectedPackage
+        }, quantity);
 
         toast.success("Product added to cart.");
 
@@ -92,7 +137,16 @@ function ProductDetails() {
 
         clearCart();
 
-        addToCart(product, quantity);
+        addToCart({
+            ...product,
+            packageId: selectedPackage?._id?.startsWith("package-")
+                ? undefined
+                : selectedPackage?._id === "default"
+                ? undefined
+                : selectedPackage?._id,
+            packageIndex: selectedPackage?.packageIndex,
+            selectedPackage
+        }, quantity);
 
         navigate("/cart");
 
@@ -210,15 +264,10 @@ function ProductDetails() {
                             }
 
                             <h3 className="product-price">
-
-                                ₹{product.defaultOnlinePrice}
-
+                                ₹{selectedPackage?.price ?? product.defaultOnlinePrice}
                                 <span>
-
-                                    / {product.unit}
-
+                                    / {selectedPackage?.label ?? product.unit}
                                 </span>
-
                             </h3>
 
                             <p className="product-description">
@@ -232,6 +281,27 @@ function ProductDetails() {
                                 }
 
                             </p>
+
+                            {availablePackages.length > 0 && (
+                                <div className="mt-4">
+                                    <label className="form-label fw-semibold" htmlFor="product-package">
+                                        Select quantity / packaging
+                                    </label>
+                                    <select id="product-package" className="form-select" value={selectedPackage?._id || ""}
+                                        onChange={(event) => setSelectedPackage(
+                                            availablePackages.find((item) => item._id === event.target.value)
+                                        )}>
+                                        {availablePackages.map((item) => (
+                                            <option key={item._id} value={item._id}>
+                                                {item.label || `${item.quantity} ${item.unit}`} - ₹{item.price}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <small className="text-muted">
+                                        Selected: {selectedPackage?.label || `${selectedPackage?.quantity || ""} ${selectedPackage?.unit || ""}`} · ₹{selectedPackage?.price ?? product.defaultOnlinePrice}
+                                    </small>
+                                </div>
+                            )}
 
                             <div className="mt-4">
 

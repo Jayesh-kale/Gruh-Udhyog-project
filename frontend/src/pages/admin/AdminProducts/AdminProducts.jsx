@@ -159,6 +159,11 @@ const AdminProducts = () => {
             );
 
             formData.append(
+                "packages",
+                JSON.stringify(data.packages || [])
+            );
+
+            formData.append(
                 "isListedOnline",
                 data.isListedOnline
             );

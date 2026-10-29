@@ -44,9 +44,23 @@ const product = new mongoose.Schema(
       min: 0,
     },
 
+    packages: {
+      type: [{
+        label: { type: String, trim: true, required: true },
+        quantity: { type: Number, min: 0.0001, required: true },
+        unit: {
+          type: String,
+          enum: ["kg", "g", "gm", "ml", "pcs", "packet"],
+          required: true,
+        },
+        price: { type: Number, min: 0, required: true },
+      }],
+      default: [],
+    },
+
     unit: {
       type: String,
-      enum: ["kg", "g", "ml", "pcs", "packet"],
+      enum: ["kg", "g", "gm", "ml", "pcs", "packet"],
       required: true,
       trim: true,
     },

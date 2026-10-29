@@ -7,6 +7,7 @@ const initialFormData = {
     description: "",
     defaultOnlinePrice: "",
     unit: "kg",
+    packages: [{ label: "1 kg", quantity: 1, unit: "kg", price: "" }],
 
     isListedOnline: true,
     isFeatured: false,
@@ -57,6 +58,16 @@ const ProductForm = ({
 
                 unit:
                     product.unit || "kg",
+
+                packages:
+                    product.packages?.length
+                        ? product.packages.map((item) => ({ ...item }))
+                        : [{
+                            label: `1 ${product.unit || "kg"}`,
+                            quantity: 1,
+                            unit: product.unit || "kg",
+                            price: product.defaultOnlinePrice ?? ""
+                        }],
 
                 isListedOnline:
                     product.isListedOnline ?? true,
@@ -123,6 +134,29 @@ const ProductForm = ({
 
     };
 
+    const updatePackage = (index, field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            packages: prev.packages.map((item, itemIndex) =>
+                itemIndex === index ? { ...item, [field]: value } : item
+            )
+        }));
+    };
+
+    const addPackage = () => {
+        setFormData((prev) => ({
+            ...prev,
+            packages: [...prev.packages, { label: "", quantity: "", unit: prev.unit, price: "" }]
+        }));
+    };
+
+    const removePackage = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            packages: prev.packages.filter((_, itemIndex) => itemIndex !== index)
+        }));
+    };
+
 
 
     // IMAGE CHANGE
@@ -179,6 +213,17 @@ const ProductForm = ({
 
         e.preventDefault();
 
+        const incompletePackage = formData.packages.find((item) =>
+            !item.label.trim() ||
+            item.quantity === "" ||
+            item.price === "" ||
+            !item.unit
+        );
+
+        if (incompletePackage) {
+            window.alert("Complete the label, quantity, unit, and price for every package.");
+            return;
+        }
 
         const data = {
 
@@ -188,6 +233,13 @@ const ProductForm = ({
                 Number(
                     formData.defaultOnlinePrice
                 ),
+
+            packages: formData.packages.map((item) => ({
+                    ...item,
+                    label: item.label.trim(),
+                    quantity: Number(item.quantity),
+                    price: Number(item.price)
+                })),
 
             displayOrder:
                 Number(
@@ -369,7 +421,7 @@ const ProductForm = ({
                     </h5>
 
                     <small className="text-muted">
-                        Online selling price and measurement unit.
+                        Add the package sizes customers can choose and the price for each.
                     </small>
 
                 </div>
@@ -415,6 +467,49 @@ const ProductForm = ({
                                     required
                                 />
 
+                            </div>
+
+                            <div className="mt-4">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <label className="form-label fw-semibold mb-0">Packaging prices</label>
+                                    <button type="button" className="btn btn-outline-success btn-sm" onClick={addPackage}>
+                                        Add package
+                                    </button>
+                                </div>
+                                {formData.packages.map((item, index) => (
+                                    <div className="row g-2 align-items-end mb-2" key={index}>
+                                        <div className="col-md-3">
+                                            <label className="form-label small">Display label</label>
+                                            <input className="form-control" placeholder="500 gm" value={item.label}
+                                                onChange={(e) => updatePackage(index, "label", e.target.value)} required />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <label className="form-label small">Quantity</label>
+                                            <input type="number" min="0.0001" step="any" className="form-control" value={item.quantity}
+                                                onChange={(e) => updatePackage(index, "quantity", e.target.value)} required />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <label className="form-label small">Unit</label>
+                                            <select className="form-select" value={item.unit}
+                                                onChange={(e) => updatePackage(index, "unit", e.target.value)}>
+                                                <option value="kg">kg</option><option value="gm">gm</option>
+                                                <option value="ml">ml</option><option value="pcs">pcs</option><option value="packet">packet</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-md-3">
+                                            <label className="form-label small">Price</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text">₹</span>
+                                                <input type="number" min="0" step="0.01" className="form-control" value={item.price}
+                                                    onChange={(e) => updatePackage(index, "price", e.target.value)} required />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-2">
+                                            <button type="button" className="btn btn-outline-danger w-100" disabled={formData.packages.length === 1}
+                                                onClick={() => removePackage(index)}>Remove</button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
 
                         </div>

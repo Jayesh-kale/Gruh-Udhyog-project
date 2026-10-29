@@ -10,10 +10,12 @@ const buildOrderItems = async (items, orderType, session) => {
     // Check duplicate products
     const productIds = items.map(item => item.productId.toString());
 
-    const uniqueProductIds = new Set(productIds);
+    const itemKeys = items.map(item =>
+        `${item.productId.toString()}:${item.packageId || item.packageIndex || "default"}`
+    );
 
-    if (productIds.length !== uniqueProductIds.size) {
-        throw new Error("Duplicate products are not allowed in a single order.");
+    if (itemKeys.length !== new Set(itemKeys).size) {
+        throw new Error("Duplicate product packages are not allowed in a single order.");
     }
 
     // Fetch all products in one query
@@ -62,10 +64,18 @@ const buildOrderItems = async (items, orderType, session) => {
         }
 
         let pricePerUnit;
+        let selectedPackage;
 
         if (orderType === "Online") {
-
-            pricePerUnit = product.defaultOnlinePrice;
+            selectedPackage = item.packageId
+                ? product.packages?.id(item.packageId)
+                : Number.isInteger(Number(item.packageIndex))
+                    ? product.packages?.[Number(item.packageIndex)]
+                    : product.packages?.[0];
+            if (product.packages?.length && !selectedPackage) {
+                throw new Error(`Please select a valid package for ${product.name}.`);
+            }
+            pricePerUnit = selectedPackage?.price ?? product.defaultOnlinePrice;
 
         } else {
 
@@ -96,7 +106,15 @@ const buildOrderItems = async (items, orderType, session) => {
 
             type: product.type,
 
-            unit: product.unit,
+            unit: selectedPackage?.label || selectedPackage?.unit || product.unit,
+
+            packageId: selectedPackage?._id || null,
+
+            packageLabel: selectedPackage?.label || null,
+
+            packageQuantity: selectedPackage?.quantity || null,
+
+            packageUnit: selectedPackage?.unit || null,
 
             quantity: item.quantity,
 

@@ -70,11 +70,11 @@ function ProductCard({ product }) {
 
                 <div className="product-price">
 
-                    ₹{product.defaultOnlinePrice}
+                    From ₹{product.packages?.[0]?.price ?? product.defaultOnlinePrice}
 
                     <span>
 
-                        / {product.unit}
+                        / {product.packages?.[0]?.label ?? product.unit}
 
                     </span>
 

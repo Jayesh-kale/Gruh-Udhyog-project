@@ -36,6 +36,29 @@ const orderItemSchema = new mongoose.Schema(
             trim: true,
         },
 
+        packageId: {
+            type: mongoose.Schema.Types.ObjectId,
+            default: null,
+        },
+
+        packageLabel: {
+            type: String,
+            default: null,
+            trim: true,
+        },
+
+        packageQuantity: {
+            type: Number,
+            default: null,
+            min: 0,
+        },
+
+        packageUnit: {
+            type: String,
+            default: null,
+            trim: true,
+        },
+
         quantity: {
             type: Number,
             required: true,

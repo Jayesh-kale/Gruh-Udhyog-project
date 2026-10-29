@@ -31,7 +31,8 @@ function SeasonalProductCard({ product,icon }) {
 
                 <span className="fw-bold text-success">
 
-                    ₹ {product.defaultOnlinePrice}/kg
+                    From ₹ {product.packages?.[0]?.price ?? product.defaultOnlinePrice}/
+                    {product.packages?.[0]?.label ?? product.unit}
 
                 </span>
 

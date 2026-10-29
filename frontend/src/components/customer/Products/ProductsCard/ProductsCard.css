@@ -121,4 +121,18 @@
 
     }
 
+    .product-content{
+        padding:14px;
+        gap:8px;
+    }
+
+    .product-content p{
+        min-height:40px;
+        font-size:.85rem;
+    }
+
+    .product-card{
+        border-radius:16px;
+    }
+
 }

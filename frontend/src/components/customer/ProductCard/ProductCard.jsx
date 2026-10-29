@@ -21,7 +21,12 @@ function ProductCard({ product }) {
             return;
         }
 
-        addToCart(product, 1);
+        const selectedPackage = product.packages?.[0] || null;
+        addToCart({
+            ...product,
+            packageId: selectedPackage?._id,
+            selectedPackage
+        }, 1);
         toast.success(`${product.name} added to cart!`);
     };
 
@@ -49,8 +54,8 @@ function ProductCard({ product }) {
                 </div>
                 <p className="description">{product.description}</p>
                 <div className="price">
-                    ₹{product.defaultOnlinePrice}
-                    <small> / {product.unit}</small>
+                    From ₹{product.packages?.[0]?.price ?? product.defaultOnlinePrice}
+                    <small> / {product.packages?.[0]?.label ?? product.unit}</small>
                 </div>
 
                 <div className="product-actions">

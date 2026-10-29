@@ -29,16 +29,18 @@ export function CartProvider({ children }) {
         setCartItems((prev) => {
 
             const existingItem = prev.find(
-
-                (item) => item._id === product._id
-
+                (item) => item._id === product._id &&
+                    (item.packageId || item.packageIndex || "") ===
+                    (product.packageId || product.packageIndex || "")
             );
 
             if (existingItem) {
 
                 return prev.map((item) =>
 
-                    item._id === product._id
+                    item._id === product._id &&
+                    (item.packageId || item.packageIndex || "") ===
+                    (product.packageId || product.packageIndex || "")
 
                         ? {
 
@@ -72,13 +74,14 @@ export function CartProvider({ children }) {
 
     };
 
-    const removeFromCart = (productId) => {
+    const removeFromCart = (productId, packageId) => {
 
         setCartItems((prev) =>
 
             prev.filter(
 
-                (item) => item._id !== productId
+                (item) => item._id !== productId ||
+                    (item.packageId || item.packageIndex || "") !== (packageId || "")
 
             )
 
@@ -86,7 +89,7 @@ export function CartProvider({ children }) {
 
     };
 
-    const updateQuantity = (productId, quantity) => {
+    const updateQuantity = (productId, quantity, packageId) => {
 
         if (quantity < 1) return;
 
@@ -94,7 +97,8 @@ export function CartProvider({ children }) {
 
             prev.map((item) =>
 
-                item._id === productId
+                item._id === productId &&
+                    (item.packageId || item.packageIndex || "") === (packageId || "")
 
                     ? {
 
@@ -141,9 +145,7 @@ export function CartProvider({ children }) {
             (total, item) =>
 
                 total +
-
-                item.defaultOnlinePrice *
-
+                (item.selectedPackage?.price ?? item.defaultOnlinePrice) *
                 item.quantity,
 
             0

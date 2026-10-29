@@ -5,6 +5,58 @@ const buildProductFilter = require("../utils/buildProductFilter");
 const buildProductSort = require("../utils/buildProductSort.js");
 const { sendSuccess, sendError } = require("../utils/sendResponse");
 
+const normalizeUnit = (value) => {
+    const aliases = {
+        gram: "gm",
+        grams: "gm",
+        millilitre: "ml",
+        milliliter: "ml",
+        piece: "pcs",
+        pieces: "pcs",
+        packets: "packet",
+    };
+    const unit = String(value || "").trim().toLowerCase();
+    return aliases[unit] || unit;
+};
+
+const allowedUnits = new Set(["kg", "g", "gm", "ml", "pcs", "packet"]);
+
+const normalizePackages = (packages) => {
+    if (!Array.isArray(packages)) {
+        return null;
+    }
+
+    return packages.map((item) => ({
+        label: String(item.label || "").trim(),
+        quantity: Number(item.quantity),
+        unit: normalizeUnit(item.unit),
+        price: Number(item.price),
+    }));
+};
+
+const hasInvalidPackage = (item) =>
+    !item.label ||
+    !Number.isFinite(item.quantity) ||
+    item.quantity <= 0 ||
+    !Number.isFinite(item.price) ||
+    item.price < 0 ||
+    !allowedUnits.has(item.unit);
+
+const serializeProduct = (product) => {
+    const data = product.toObject ? product.toObject() : product;
+
+    if (!data.packages?.length) {
+        data.packages = [{
+            _id: "default",
+            label: `1 ${data.unit}`,
+            quantity: 1,
+            unit: data.unit,
+            price: data.defaultOnlinePrice,
+        }];
+    }
+
+    return data;
+};
 
 
 // Get All Products
@@ -54,7 +106,7 @@ exports.getAllProducts = async (req, res) => {
             "Products fetched successfully.",
             {
 
-                products,
+                products: products.map(serializeProduct),
 
                 pagination: {
 
@@ -135,7 +187,7 @@ exports.getProductById = async (req, res) => {
             res,
             200,
             "Product fetched successfully.",
-            { product }
+            { product: serializeProduct(product) }
         );
 
     } catch (error) {
@@ -171,6 +223,7 @@ exports.createProduct = async (req, res) => {
             description,
             defaultOnlinePrice,
             unit,
+            packages: rawPackages = [],
             isFeatured = false,
             isListedOnline = true,
             displayOrder = 0,
@@ -188,6 +241,30 @@ exports.createProduct = async (req, res) => {
                 "Name, category and unit are required."
             );
 
+        }
+
+        let packages;
+        try {
+            packages = typeof rawPackages === "string"
+                ? JSON.parse(rawPackages)
+                : rawPackages;
+        } catch {
+            return sendError(res, 400, "Invalid packaging prices.");
+        }
+
+        if (!Array.isArray(packages)) {
+            return sendError(res, 400, "Packaging prices must be an array.");
+        }
+
+        packages = normalizePackages(packages);
+
+        if (packages === null || packages.some(hasInvalidPackage)) {
+            return sendError(res, 400, "Each package needs a label, quantity, unit and valid price.");
+        }
+
+        const normalizedUnit = normalizeUnit(unit);
+        if (!allowedUnits.has(normalizedUnit)) {
+            return sendError(res, 400, "Invalid product unit.");
         }
 
         if (defaultOnlinePrice == null || defaultOnlinePrice < 0) {
@@ -282,10 +359,11 @@ exports.createProduct = async (req, res) => {
             image,
 
             defaultOnlinePrice,
+            packages,
 
             displayOrder,
 
-            unit,
+            unit: normalizedUnit,
 
             isFeatured,
 
@@ -380,6 +458,7 @@ exports.updateProduct = async (req, res) => {
             description,
             defaultOnlinePrice,
             unit,
+            packages: rawPackages,
             isListedOnline,
             isSeasonal,
             season
@@ -397,6 +476,28 @@ exports.updateProduct = async (req, res) => {
             season !== undefined
                 ? season
                 : product.season;
+
+        let packages = rawPackages;
+        if (typeof packages === "string") {
+                try {
+                    packages = JSON.parse(packages);
+                } catch {
+                    return sendError(res, 400, "Invalid packaging prices.");
+                }
+        }
+        if (packages !== undefined) {
+            packages = normalizePackages(packages);
+        }
+        if (packages !== undefined && (packages === null || packages.some(hasInvalidPackage))) {
+                return sendError(res, 400, "Each package needs a label, quantity, unit and valid price.");
+        }
+
+        const normalizedUnit = unit === undefined
+            ? product.unit
+            : normalizeUnit(unit);
+        if (!allowedUnits.has(normalizedUnit)) {
+            return sendError(res, 400, "Invalid product unit.");
+        }
 
         if (finalIsSeasonal && !finalSeason) {
 
@@ -486,7 +587,10 @@ exports.updateProduct = async (req, res) => {
             product.defaultOnlinePrice = defaultOnlinePrice;
 
         if (unit !== undefined)
-            product.unit = unit;
+            product.unit = normalizedUnit;
+
+        if (packages !== undefined)
+            product.packages = packages;
 
         if (isListedOnline !== undefined)
             product.isListedOnline = isListedOnline;
@@ -661,7 +765,9 @@ exports.searchProducts = async (req, res) => {
             );
         }
 
-        return sendSuccess(res,200,"Products fetched successfully.",{ products });
+        return sendSuccess(res, 200, "Products fetched successfully.", {
+            products: products.map(serializeProduct)
+        });
 
     } catch (error) {
 
@@ -702,7 +808,7 @@ exports.getFeaturedProducts = async (req, res) => {
             res,
             200,
             "Featured products fetched successfully",
-            { products }
+            { products: products.map(serializeProduct) }
         );
     } catch (error) {
         return sendError(res, 500, error.message);
@@ -717,7 +823,9 @@ exports.getProductByCategory = async (req, res) => {
         if (products.length === 0) {
             return sendError(res, 404, "No products found in this category.");
         }
-        return sendSuccess(res, 200, "Products fetched successfully.", { products });
+        return sendSuccess(res, 200, "Products fetched successfully.", {
+            products: products.map(serializeProduct)
+        });
     } catch (error) {
         return sendError(res, 500, error.message);
     }
@@ -744,7 +852,7 @@ exports.getSeasonalProducts = async (req, res) => {
             res,
             200,
             "Seasonal products fetched successfully.",
-            { seasonalProducts }
+            { seasonalProducts: seasonalProducts.map(serializeProduct) }
         );
 
     } catch (error) {
@@ -764,7 +872,9 @@ exports.getRelatedProducts = async(req,res) => {
         if (products.length === 0) {
             return sendError(res, 404, "No related products found.");
         }
-        return sendSuccess(res, 200, "Related products fetched successfully.", { products });
+        return sendSuccess(res, 200, "Related products fetched successfully.", {
+            products: products.map(serializeProduct)
+        });
     } catch (error) {
         return sendError(res, 500, error.message);
     }

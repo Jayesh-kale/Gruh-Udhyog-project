@@ -26,8 +26,9 @@ function CartItem({
 
     const [openDialog, setOpenDialog] = useState(false);
 
-    const lineTotal =
-        item.defaultOnlinePrice * item.quantity;
+    const price = item.selectedPackage?.price ?? item.defaultOnlinePrice;
+    const packageLabel = item.selectedPackage?.label ?? item.unit;
+    const lineTotal = price * item.quantity;
 
     return (
 
@@ -83,11 +84,11 @@ function CartItem({
 
                     <div className="cart-price">
 
-                        ₹{item.defaultOnlinePrice}
+                        ₹{price}
 
                         <span>
 
-                            {" "} / {item.unit}
+                            {" "} / {packageLabel}
 
                         </span>
 
@@ -108,14 +109,16 @@ function CartItem({
                             onIncrease={() =>
                                 onUpdateQuantity(
                                     item._id,
-                                    item.quantity + 1
+                                    item.quantity + 1,
+                                    item.packageId ?? item.packageIndex
                                 )
                             }
 
                             onDecrease={() =>
                                 onUpdateQuantity(
                                     item._id,
-                                    item.quantity - 1
+                                    item.quantity - 1,
+                                    item.packageId ?? item.packageIndex
                                 )
                             }
 
@@ -171,7 +174,7 @@ function CartItem({
 
                 onConfirm={() => {
 
-                    onRemove(item._id);
+                    onRemove(item._id, item.packageId ?? item.packageIndex);
 
                     setOpenDialog(false);
 

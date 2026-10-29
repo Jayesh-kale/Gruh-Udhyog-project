@@ -143,7 +143,9 @@ function Checkout() {
 
                 items: cartItems.map((item) => ({
                     productId: item._id,
-                    quantity: Number(item.quantity)
+                    quantity: Number(item.quantity),
+                    packageId: item.packageId,
+                    packageIndex: item.packageIndex
                 })),
 
                 orderType: "Online",
@@ -462,7 +464,7 @@ function Checkout() {
 
                                         <small>
 
-                                            {item.quantity} {item.unit}
+                                            {item.quantity} {item.selectedPackage?.label ?? item.unit}
 
                                         </small>
 
@@ -472,7 +474,7 @@ function Checkout() {
 
                                         ₹{
 
-                                            item.defaultOnlinePrice *
+                                            (item.selectedPackage?.price ?? item.defaultOnlinePrice) *
 
                                             item.quantity
 
